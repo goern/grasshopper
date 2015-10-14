@@ -7,7 +7,7 @@ Grasshopper is an implementation of the [Nulecule Specification](http://www.proj
 Grasshopper is packaged as a container. End-users typically do not install the software from source. Instead use the Grasshopper container as the `FROM` line in a Dockerfile and package your application on top. For example:
 
 ```
-FROM goern/grasshopper:0.0.2
+FROM goern/grasshopper:0.0.3
 
 MAINTAINER Your Name <you@example.com>
 

@@ -34,7 +34,7 @@ func main() {
 	app := cli.NewApp()
 
 	app.Name = "grasshopper"
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.Compiled = time.Now()
 	app.Usage = "make a Nulecule go!"
 	app.Authors = []cli.Author{
