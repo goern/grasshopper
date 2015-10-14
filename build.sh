@@ -7,6 +7,6 @@ set -o pipefail
 STARTTIME=$(date +%s)
 
 cd src
-go build -o ../grasshopper .
+CGO_ENABLED=0 go build --ldflags '-extldflags "-static"' -o ../grasshopper .
 
 ret=$?; ENDTIME=$(date +%s); echo "$0 took $(($ENDTIME - $STARTTIME)) seconds"; exit "$ret"

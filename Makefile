@@ -4,9 +4,6 @@ GOPATH = $(shell pwd)
 OUT_DIR = _output
 OUT_PKG_DIR = Godeps/_workspace/pkg
 
-export GOFLAGS
-export TESTFLAGS
-
 all build:
 	./build.sh $(WHAT)
 .PHONY: all build
