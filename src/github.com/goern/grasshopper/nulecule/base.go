@@ -1,7 +1,7 @@
 package nulecule
 
 //GRASSHOPPERVERSION is Grasshopper version
-const GRASSHOPPERVERSION = "0.0.2"
+const GRASSHOPPERVERSION = "0.0.3"
 
 //NULECULESPECVERSION is the version of the Nulecule specification that Grasshopper is implementing
 const NULECULESPECVERSION = "0.0.2"

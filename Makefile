@@ -9,8 +9,8 @@ all build:
 .PHONY: all build
 
 image: build
-	docker build --rm --tag goern/grasshopper:0.0.2 -f Dockerfile .
+	docker build --rm --tag goern/grasshopper:0.0.3 -f Dockerfile .
 
 clean:
 	rm -rf grasshopper
-	docker rmi goern/grasshopper:0.0.2
+	docker rmi goern/grasshopper:0.0.3
