@@ -6,6 +6,7 @@ set -o pipefail
 
 STARTTIME=$(date +%s)
 
-go build
+cd src
+go build -o ../grasshopper .
 
 ret=$?; ENDTIME=$(date +%s); echo "$0 took $(($ENDTIME - $STARTTIME)) seconds"; exit "$ret"

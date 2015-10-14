@@ -24,7 +24,11 @@ import (
 	"time"
 
 	"github.com/codegangsta/cli"
+	"github.com/goern/grasshopper/cmd"
+	"github.com/op/go-logging"
 )
+
+var log = logging.MustGetLogger("grasshopper")
 
 func main() {
 	app := cli.NewApp()
@@ -51,48 +55,12 @@ func main() {
 	}
 
 	app.Commands = []cli.Command{
-		{
-			Name:  "fetch",
-			Usage: "Will download and combine artifacts from the target application and any dependent applications.",
-			Action: func(c *cli.Context) {
-				println("fetching: ", c.Args().First())
-			},
-		},
-		{
-			Name:  "install",
-			Usage: "Peform actions to prepare application to run.",
-			Action: func(c *cli.Context) {
-				println("installing: ", c.Args().First())
-			},
-		},
-		{
-			Name:  "run",
-			Usage: "Run an application.",
-			Action: func(c *cli.Context) {
-				println("running: ", c.Args().First())
-			},
-		},
-		{
-			Name:  "stop",
-			Usage: "Stop an application.",
-			Action: func(c *cli.Context) {
-				println("stopping: ", c.Args().First())
-			},
-		},
-		{
-			Name:  "uninstall",
-			Usage: "Remove deployment configuration from platform.",
-			Action: func(c *cli.Context) {
-				println("uninstalling: ", c.Args().First())
-			},
-		},
-		{
-			Name:  "clean",
-			Usage: "Remove artifacts files from local system and clean up directory.",
-			Action: func(c *cli.Context) {
-				println("cleaning: ", c.Args().First())
-			},
-		},
+		cmd.FetchCommand(),
+		cmd.InstallCommand(),
+		cmd.RunCommand(),
+		cmd.StopCommand(),
+		cmd.UninstallCommand(),
+		cmd.CleanCommand(),
 	}
 
 	app.Action = func(c *cli.Context) {

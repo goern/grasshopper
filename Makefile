@@ -1,5 +1,6 @@
 # This is just a wrapper for the old school guys
 
+GOPATH = $(shell pwd)
 OUT_DIR = _output
 OUT_PKG_DIR = Godeps/_workspace/pkg
 
