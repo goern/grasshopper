@@ -21,6 +21,16 @@ package cmd
 
 import "github.com/codegangsta/cli"
 
+func LifecycleFlagSet() []cli.Flag {
+	return []cli.Flag{
+		cli.StringFlag{
+			Name:   "provider",
+			Usage:  "The provider to use. Overrides provider value in answerfile.",
+			EnvVar: "GRASSHOPPER_PROVIDER",
+		},
+	}
+}
+
 //InstallCommand returns an initialized CLI install command
 func InstallCommand() cli.Command {
 	return cli.Command{
@@ -29,5 +39,6 @@ func InstallCommand() cli.Command {
 		Action: func(c *cli.Context) {
 			println("installing: ", c.Args().First())
 		},
+		Flags: LifecycleFlagSet(),
 	}
 }

@@ -29,5 +29,6 @@ func StopCommand() cli.Command {
 		Action: func(c *cli.Context) {
 			println("stopping: ", c.Args().First())
 		},
+		Flags: LifecycleFlagSet(),
 	}
 }

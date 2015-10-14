@@ -29,5 +29,6 @@ func RunCommand() cli.Command {
 		Action: func(c *cli.Context) {
 			println("running: ", c.Args().First())
 		},
+		Flags: LifecycleFlagSet(),
 	}
 }

@@ -29,5 +29,6 @@ func UninstallCommand() cli.Command {
 		Action: func(c *cli.Context) {
 			println("uninstalling: ", c.Args().First())
 		},
+		Flags: LifecycleFlagSet(),
 	}
 }

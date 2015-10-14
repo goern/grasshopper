@@ -26,7 +26,7 @@ import (
 
 var log = logging.MustGetLogger("grasshopper")
 
-func fetchFlagSet() []cli.Flag {
+func FetchFlagSet() []cli.Flag {
 	return []cli.Flag{
 		cli.BoolFlag{
 			Name:  "dry-run",
@@ -36,10 +36,10 @@ func fetchFlagSet() []cli.Flag {
 }
 
 //fetchFunction is the function that downloads all Nulecule container images
-func fetchFunction(c *cli.Context) {
+func FetchFunction(c *cli.Context) {
 	if len(c.Args()) < 1 {
 		cli.ShowCommandHelp(c, "fetch")
-		log.Critical("Please provide a repository to install from.")
+		log.Critical("Please provide an Application (by URL) to fetch.")
 	} else {
 		log.Info("fetching: ", c.Args().First())
 	}
@@ -49,8 +49,8 @@ func fetchFunction(c *cli.Context) {
 func FetchCommand() cli.Command {
 	return cli.Command{
 		Name:   "fetch",
-		Usage:  "Will download and combine artifacts from the target application and any dependent applications.",
-		Action: fetchFunction,
-		Flags:  fetchFlagSet(),
+		Usage:  "Will download from a URL and combine artifacts from the target application and any dependent applications.",
+		Action: FetchFunction,
+		Flags:  FetchFlagSet(),
 	}
 }

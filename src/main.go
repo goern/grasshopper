@@ -50,7 +50,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "verbose",
-			Usage: "Show more output",
+			Usage: "Show more output.",
 		},
 	}
 
