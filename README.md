@@ -21,9 +21,10 @@ ADD /artifacts /grasshopping/artifacts
 First of all, clone the github repository: `git clone https://github.com/goern/grasshopper`.
 
 ### Build
-```
-make image
-```
+
+To build a Grasshopper base image just run `make image`, this will compile the
+Grasshopper binary and generate a Docker container image containing it.
+
 
 ## Providers
 
