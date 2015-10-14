@@ -4,7 +4,7 @@ Grasshopper is an implementation of the [Nulecule Specification](http://www.proj
 
 ## Getting Started
 
-Atomic App is packaged as a container. End-users typically do not install the software from source. Instead use the atomicapp container as the `FROM` line in a Dockerfile and package your application on top. For example:
+Grasshopper is packaged as a container. End-users typically do not install the software from source. Instead use the Grasshopper container as the `FROM` line in a Dockerfile and package your application on top. For example:
 
 ```
 FROM goern/grasshopper:0.0.2
