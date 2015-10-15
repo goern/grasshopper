@@ -18,6 +18,8 @@ ADD /artifacts /grasshopping/artifacts
 
 ## Developers
 
+[![Build Status](https://travis-ci.org/goern/grasshopper.svg?branch=develop)](https://travis-ci.org/goern/grasshopper)
+
 First of all, clone the github repository: `git clone https://github.com/goern/grasshopper`.
 
 ### Build
