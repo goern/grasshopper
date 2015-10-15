@@ -34,7 +34,7 @@ Providers represent various deployment targets.
 
 ## Dependencies
 
-TBD
+Please have a look at Godeps/Godeps.json to figure out the dependencies.
 
 ##Communication channels
 
