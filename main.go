@@ -26,6 +26,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/goern/grasshopper/cmd"
+	"github.com/goern/grasshopper/nulecule"
 	"github.com/op/go-logging"
 )
 
@@ -35,7 +36,7 @@ func main() {
 	app := cli.NewApp()
 
 	app.Name = "grasshopper"
-	app.Version = "0.0.3"
+	app.Version = nulecule.GrasshopperVersion
 	app.Compiled = time.Now()
 	app.Usage = "make a Nulecule go!"
 	app.Authors = []cli.Author{
