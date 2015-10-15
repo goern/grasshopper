@@ -17,8 +17,8 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Package grasshopper is the main command line tool for Grasshopper.
-package grasshopper
+// Package main is the main command line tool for Grasshopper.
+package main
 
 import (
 	"os"

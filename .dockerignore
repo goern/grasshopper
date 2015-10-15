@@ -1,5 +1,8 @@
-src
-pkg
-bin
+cmd
+fixtures
+Godeps
+nulecule
 .git
 .gitignore
+.travis.yml
+main.go
