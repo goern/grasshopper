@@ -22,10 +22,12 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 	"github.com/op/go-logging"
+	//  "github.com/hashicorp/go-getter"
 )
 
 var log = logging.MustGetLogger("grasshopper")
 
+//FetchFlagSet lists flags that are only valid for the fetch command.
 func FetchFlagSet() []cli.Flag {
 	return []cli.Flag{
 		cli.BoolFlag{
@@ -35,7 +37,7 @@ func FetchFlagSet() []cli.Flag {
 	}
 }
 
-//fetchFunction is the function that downloads all Nulecule container images
+//FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(c *cli.Context) {
 	if len(c.Args()) < 1 {
 		cli.ShowCommandHelp(c, "fetch")

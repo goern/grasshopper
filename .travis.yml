@@ -1,10 +1,12 @@
 language: go
 go:
 - 1.4.3
+- 1.5
 install:
 - go get golang.org/x/tools/cmd/cover
 - go get -v github.com/axw/gocov/gocov
 - go get -v github.com/mattn/goveralls
+- go get github.com/codegangsta/cli
 - go get github.com/goern/grasshopper
 script:
 - go test -v -covermode=count -coverprofile=profile.cov github.com/goern/grasshopper/nulecule

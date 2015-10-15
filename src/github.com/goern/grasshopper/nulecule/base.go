@@ -1,55 +1,52 @@
+// Package nulecule will provide some constants required for Grasshopper
+// and all required data structures to run a Nulecule.
 package nulecule
 
-//GRASSHOPPERVERSION is Grasshopper version
-const GRASSHOPPERVERSION = "0.0.3"
+const (
+	//GrasshopperVersion is Grasshopper version
+	GrasshopperVersion = "0.0.3"
 
-//NULECULESPECVERSION is the version of the Nulecule specification that Grasshopper is implementing
-const NULECULESPECVERSION = "0.0.2"
+	//NuleculeVersion is the version of the Nulecule specification that Grasshopper is implementing
+	NuleculeVersion = "0.0.2"
 
-//MAIN_FILE is the filename we are looking for within the Grasshopper based container
-const MAIN_FILE = "Nulecule"
+	//NulefileManifestFile is the filename we are looking for within the Grasshopper based container
+	NulefileManifestFile = "Nulecule"
 
-//ANSWERS_FILE is the filename we are looking for within the working context to get answers from (during install phase)
-const ANSWERS_FILE = "answers.conf"
+	//AnswersFile is the filename we are looking for within the working context to get answers from (during install phase)
+	AnswersFile = "answers.conf"
 
-//ANSWERS_FILE_SAMPLE is the filename we write default answers to (during fetch phase)
-const ANSWERS_FILE_SAMPLE = "answers.conf.sample"
+	//AnswersFileSample is the filename we write default answers to (during fetch phase)
+	AnswersFileSample = "answers.conf.sample"
 
-//SUPPORTED_PROVIDERS lists all prividers that Grasshopper supports
-const SUPPORTED_PROVIDERS = "none"
+	//SupportedProviders lists all prividers that Grasshopper supports
+	SupportedProviders = "none"
 
-//DEFAULT_PROVIDER is the default provider to use
-const DEFAULT_PROVIDER = "none"
+	//DefaultProvider is the default provider to use
+	DefaultProvider = "none"
 
-//DEFAULT_NAMESPACE is the default namespace to be used with the provider
-const DEFAULT_NAMESPACE = "default"
+	//DefaultNamespace is the default namespace to be used with the provider
+	DefaultNamespace = "default"
 
-//LOCK_FILE location
-const LOCK_FILE = "/run/lock/grasshopper.lock"
+	//GrasshopperLockFile location
+	GrasshopperLockFile = "/run/lock/grasshopper.lock"
 
-//HOST_DIR location
-const HOST_DIR = "/host"
+	//HostDir location
+	HostDir = "/host"
+)
 
-//Answers is a map of configuration parameters and the value to set for them
+//Answers is a map of configuration parameters and their value
 type Answers map[string]string
 
 //Base contains a set of nulecule config properties
-//It is set by the atomicapp subcommands
 type Base struct {
-	AnswersData        map[string]Answers
-	answersDir         string
-	MainfileData       *ContainerApplication
-	targetPath         string
-	Nodeps             bool
-	DryRun             bool
-	AppPath            string
-	app                string
-	WriteSampleAnswers bool
+	AnswersData            map[string]Answers
+	ContainerApplication   *ContainerApplication
+	WriteAnswersFileSample bool
 }
 
-//ContainerApplication is a struct representation of the Nulecule specification file, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html
+//ContainerApplication is a struct representating the Nulecule file, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html
 type ContainerApplication struct {
-	ID           string
+	AppID        string
 	Specversion  string
 	Metadata     *Metadata
 	Graph        []Component

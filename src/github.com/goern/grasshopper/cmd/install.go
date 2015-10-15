@@ -21,6 +21,7 @@ package cmd
 
 import "github.com/codegangsta/cli"
 
+//LifecycleFlagSet is applied to all Commands that operate on a provider and controll the lifecycle of an application within a provider's context
 func LifecycleFlagSet() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
