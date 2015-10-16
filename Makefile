@@ -6,7 +6,10 @@ OUT_PKG_DIR=Godeps/_workspace/pkg
 all build: main.go
 	CGO_ENABLED=0 go build --ldflags '-extldflags "-static"'
 
-image: build
+test:
+	go test -v github.com/goern/grasshopper/nulecule
+
+image: build test
 	strip grasshopper
 	docker build --rm --tag goern/grasshopper:0.0.4 -f Dockerfile .
 
