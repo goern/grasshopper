@@ -37,7 +37,8 @@ func ParseFile(filename string) (*ContainerApplication, error) {
 	f, err := os.Open(filename)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		return nil, err
 	}
 
 	return Parse(f)

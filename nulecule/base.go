@@ -46,11 +46,11 @@ type Base struct {
 
 //ContainerApplication is a struct representating the Nulecule file, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html
 type ContainerApplication struct {
-	AppID       string `yaml:"id"`
-	Specversion string
-	//	Metadata     *Metadata
-	//	Graph        []Component
-	//	Requirements []Requirement
+	AppID        string `yaml:"id"`
+	Specversion  string
+	Metadata     *Metadata
+	Graph        []Component
+	Requirements []Requirement
 }
 
 //Metadata arbitrary_data is not supported by Grasshopper, represents a http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject
@@ -102,7 +102,7 @@ type Component struct {
 	Name      string
 	Source    string
 	Params    []Param
-	Artifacts map[string][]ArtifactEntry
+	Artifacts map[string][]string // FIXME this should really be a ArtifactEntry
 }
 
 //Requirement is a list of requirements of the Container Application, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject, Grasshopper only supports Storage Requirement
