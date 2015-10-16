@@ -3,24 +3,23 @@
 package nulecule
 
 import (
-	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestParse(t *testing.T) {
-	f, err := os.Open("../fixtures/Nulecule")
+func TestParseFile(t *testing.T) {
+	assert := assert.New(t)
 
-	if err != nil {
-		panic(err)
-	}
-
-	containerApplication, parseError := Parse(f)
+	containerApplication, parseError := ParseFile("../fixtures/Nulecule")
 
 	if parseError != nil {
 		panic(parseError)
 	}
 
-	f.Close()
+	if assert.NotNil(containerApplication) {
+		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
+	}
 
-	t.Log(containerApplication)
+	t.Log(containerApplication.Specversion)
 }
