@@ -4,7 +4,9 @@ Grasshopper is an implementation of the [Nulecule Specification](http://www.proj
 
 ## Getting Started
 
-Grasshopper is packaged as a container. End-users typically do not install the software from source. Instead use the Grasshopper container as the `FROM` line in a Dockerfile and package your application on top. For example:
+Grasshopper is packaged as a container. End-users typically do not install the
+software from source. Instead use the Grasshopper container as the `FROM` line
+in your Dockerfile and package your application on top. For example:
 
 ```
 FROM goern/grasshopper:0.0.4
@@ -15,6 +17,9 @@ ADD /Nulecule /Dockerfile README.md /grasshopping/
 ADD /artifacts /grasshopping/artifacts
 ```
 
+To install your newly nuleculized application, simply call `atomic run myapp`.
+
+For a description of the lifecycle of a Nulecule, please refer to FIXME
 
 ## Developers
 
@@ -27,6 +32,12 @@ First of all, clone the github repository: `git clone https://github.com/goern/g
 
 To build a Grasshopper base image just run `make image`, this will compile the
 Grasshopper binary and generate a Docker container image containing it.
+
+
+### Test
+
+There is a Makefile target called `test`, which will run all the GO tests. We aim
+to keep the test coverage over 75%.
 
 
 ## Providers
