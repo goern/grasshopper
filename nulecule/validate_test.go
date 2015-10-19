@@ -3,7 +3,6 @@
 package nulecule
 
 import (
-	"path/filepath"
 	"testing"
 )
 

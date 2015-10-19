@@ -11,7 +11,7 @@ import (
 func TestParseFile(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../fixtures/Nulecule")
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 
 	if parseError != nil {
 		t.Log(parseError)
