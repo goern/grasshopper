@@ -17,9 +17,7 @@ func TestParseFile(t *testing.T) {
 		t.Log(parseError)
 	}
 
-	if assert.NotNil(containerApplication) {
-		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
-	}
+	assert.NotNil(containerApplication)
 
 	//	t.Log(string(containerApplication))
 }
