@@ -1,0 +1,30 @@
+grasshopper(8)
+==============
+include::man.asciidoc[]
+
+NAME
+----
+grasshopper - a Nulecule implementation
+
+
+SYNOPSIS
+--------
+grasshopper
+
+
+DESCRIPTION
+-----------
+
+Grasshopper will make your Nulecule GO!
+
+
+SEE ALSO
+--------
+
+/usr/share/doc/grasshopper-*/README.md
+
+
+
+AUTHORS
+-------
+include::AUTHORS[]
