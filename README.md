@@ -9,7 +9,7 @@ software from source. Instead use the Grasshopper container as the `FROM` line
 in your Dockerfile and package your application on top. For example:
 
 ```
-FROM goern/grasshopper:0.0.4
+FROM goern/grasshopper:0.0.5
 
 MAINTAINER Your Name <you@example.com>
 

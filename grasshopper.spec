@@ -1,11 +1,11 @@
 Name:           grasshopper
-Version:        0.0.4
+Version:        0.0.5
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
 License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
-Source0:        grasshopper-0.0.4.tar.gz
+Source0:        grasshopper-0.0.5.tar.gz
 
 BuildRequires:	golang-bin
 Requires:       golang
