@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.6
+Version:        0.0.4
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -35,17 +35,11 @@ cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 %doc README.md
 
 %post
-alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper-{goversion} %{alternatives_priority}
+alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper-{version} %{alternatives_priority}
 
 %preun
-alternatives --remove grasshopper %{_bindir}/grasshopper-%{goversion}
+alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Tue Nov 03 2015 Christoph Görn <goern@redhat.com> 0.0.6-1
-- new package built with tito
-
-* Tue Nov 03 2015 Christoph Görn <goern@redhat.com> 0.0.5-1
-- new package built with tito
-
-* Tue Nov  3 2015 Christoph Görn
+* Tue Nov 03 2015 Christoph Görn
 - initial RPMification
