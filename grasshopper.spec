@@ -41,5 +41,8 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Tue Nov 03 2015 Christoph Görn <goern@redhat.com> 0.0.5-1
+- new package built with tito
+
 * Tue Nov 03 2015 Christoph Görn
 - initial RPMification
