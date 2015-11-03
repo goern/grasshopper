@@ -1,0 +1,8 @@
+---
+specversion: 0.1.99
+
+graph:
+  - source: docker://goern/mongodb-app
+  - name: mlb-parks
+    artifacts:
+      - borken_too

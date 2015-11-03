@@ -37,8 +37,16 @@ func ParseFile(filename string) (*ContainerApplication, error) {
 	f, err := os.Open(filename)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		return nil, err
 	}
 
 	return Parse(f)
+}
+
+// FollowReference will follow a reference to external Nulecules and populate
+// the Nulecule nulecule with the data read in.
+func FollowReference(filename string, nulecule *ContainerApplication) error {
+
+	return nil
 }

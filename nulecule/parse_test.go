@@ -11,15 +11,13 @@ import (
 func TestParseFile(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../fixtures/Nulecule")
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 
 	if parseError != nil {
-		panic(parseError)
+		t.Log(parseError)
 	}
 
-	if assert.NotNil(containerApplication) {
-		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
-	}
+	assert.NotNil(containerApplication)
 
-	t.Log(containerApplication.Specversion)
+	//	t.Log(string(containerApplication))
 }

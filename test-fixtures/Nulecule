@@ -1,0 +1,18 @@
+---
+specversion: 0.0.2
+id: mlb-parks-nulecule
+
+metadata:
+  name: MLB Parks
+  appversion: 1.0.0
+  description: MLB Parks application on EAP 6 & MongoDB
+  license:
+    name: LGPL3
+    URL: http://gnu.org/
+graph:
+  - name: aggregated-mongodb-atomicapp
+    source: docker://goern/mongodb-app
+  - name: mlb-parks
+    artifacts:
+      openshift:
+        - file://artifacts/openshift/mlbparks-template.yaml

@@ -11,10 +11,10 @@ test:
 
 image: build test
 	strip grasshopper
-	docker build --rm --tag goern/grasshopper:0.0.4 -f Dockerfile .
+	docker build --rm --tag goern/grasshopper:0.0.5 -f Dockerfile .
 
 clean:
 	rm -rf grasshopper
 
 clean-image:
-	docker rmi goern/grasshopper:0.0.4
+	docker rmi goern/grasshopper:0.0.5
