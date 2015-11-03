@@ -7,6 +7,9 @@ License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
 Source0:        https://github.com/goern/grasshopper-0.0.4.tar.gz
 
+BuildRequires:	golang-bin
+Requires:       golang
+
 %description
 This will make a Nulecule GO!
 
