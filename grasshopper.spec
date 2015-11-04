@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.8
+Version:        0.0.9
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -55,6 +55,9 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.9-1
+- add godep as a build step (goern@redhat.com)
+
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.8-1
 - fix a type in .spec (goern@redhat.com)
 
