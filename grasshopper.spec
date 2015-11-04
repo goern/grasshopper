@@ -7,7 +7,7 @@ License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
 Source0:        grasshopper-%{version}.tar.gz
 
-BuildRequires:	golang-bin
+BuildRequires:	golang-bin git
 Requires:       golang
 
 %ifarch x86_64
@@ -27,7 +27,7 @@ GOPATH="$(pwd)"
 GOBIN="$GOPATH/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
-export GOPATH GOBIN GOOS GOARCH 
+export GOPATH GOBIN GOOS GOARCH
 
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" godep restore
