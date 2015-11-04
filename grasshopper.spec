@@ -31,6 +31,8 @@ GOOS=linux
 GOARCH="%{GOARCH}"
 export GOSRC GOROOT GOOS GOBIN
 
+LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
+LC_ALL=C PATH="$PATH:$GOBIN" godep restore
 LC_ALL=C PATH="$PATH:$GOBIN" make
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 

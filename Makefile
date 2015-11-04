@@ -4,6 +4,7 @@ OUT_DIR=_output
 OUT_PKG_DIR=Godeps/_workspace/pkg
 
 all build: main.go
+	godep restore
 	CGO_ENABLED=0 go build --ldflags '-extldflags "-static"'
 
 test:
