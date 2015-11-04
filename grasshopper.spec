@@ -5,7 +5,7 @@ Summary:        This will make a Nulecule GO!
 
 License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
-Source0:        grasshopper-0.0.5.tar.gz
+Source0:        grasshopper-%{version}.tar.gz
 
 BuildRequires:	golang-bin
 Requires:       golang
@@ -54,14 +54,6 @@ alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.6-1
-- 
-
-* Wed Nov 04 2015 Christoph Görn <goern@redhat.com>
-- move to rel-eng/ (goern@redhat.com)
-- add man page (stub) (goern@redhat.com)
-- remove the .srpm (goern@redhat.com)
-
-* Wed Nov 04 2015 Christoph Görn <goern@redhat.com>
 - move to rel-eng/ (goern@redhat.com)
 - add man page (stub) (goern@redhat.com)
 - remove the .srpm (goern@redhat.com)
