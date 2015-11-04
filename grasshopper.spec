@@ -10,6 +10,10 @@ Source0:        grasshopper-0.0.5.tar.gz
 BuildRequires:	golang-bin
 Requires:       golang
 
+%ifarch x86_64
+    %global GOARCH amd64
+%endif
+
 %description
 This will make a Nulecule GO!
 
@@ -19,7 +23,15 @@ This will make a Nulecule GO!
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
-make
+GOROOT="$(pwd)"
+GOSRC="$(GOROOT)"
+GOPATH="$(GOROOT)"
+GOBIN="$GOROOT/bin"
+GOOS=linux
+GOARCH="%{GOARCH}"
+export GOSRC GOROOT GOOS GOBIN
+
+LC_ALL=C PATH="$PATH:$GOBIN" make
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 
 %clean
@@ -41,6 +53,16 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Wed Nov 04 2015 Christoph Görn <goern@redhat.com>
+- move to rel-eng/ (goern@redhat.com)
+- add man page (stub) (goern@redhat.com)
+- remove the .srpm (goern@redhat.com)
+
+* Wed Nov 04 2015 Christoph Görn <goern@redhat.com>
+- move to rel-eng/ (goern@redhat.com)
+- add man page (stub) (goern@redhat.com)
+- remove the .srpm (goern@redhat.com)
+
 * Tue Nov 03 2015 Christoph Görn <goern@redhat.com> 0.0.5-1
 - new package built with tito
 
