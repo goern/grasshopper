@@ -24,8 +24,8 @@ mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
 GOROOT="$(pwd)"
-GOSRC="$(GOROOT)"
-GOPATH="$(GOROOT)"
+GOSRC="$(pwd)"
+GOPATH="$(pwd)"
 GOBIN="$GOROOT/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
