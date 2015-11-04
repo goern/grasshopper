@@ -23,11 +23,11 @@ This will make a Nulecule GO!
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
-GOROOT="$(pwd)"
-GOBIN="$GOROOT/bin"
+GOPATH="$(pwd)"
+GOBIN="$GOPATH/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
-export GOROOT GOBIN GOOS GOARCH 
+export GOPATH GOBIN GOOS GOARCH 
 
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" godep restore
