@@ -24,12 +24,10 @@ mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
 GOROOT="$(pwd)"
-GOSRC="$(pwd)"
-GOPATH="$(pwd)"
 GOBIN="$GOROOT/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
-export GOSRC GOROOT GOOS GOBIN
+export GOROOT GOBIN GOOS GOARCH 
 
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" godep restore
