@@ -1,15 +1,35 @@
-# grasshopper
+= Grasshopper, this will make your Nulecule GO!
+Christoph Görn <goern@redhat.com>
+:description: Grasshopper is a GOlang based implementation of the Nulecule Specification.
+:doctype: book
+:compat-mode:
+:experimental:
+:listing-caption: Listing
+:icons: font
+:toc:
+:toclevels: 3
+ifdef::backend-pdf[]
+:pagenums:
+:pygments-style: bw
+:source-highlighter: pygments
+endif::[]
 
-Grasshopper is an implementation of the [Nulecule Specification](http://www.projectatomic.io/docs/nulecule/). It can be used to bootstrap container applications and to install and run them. Grasshopper is designed to be run in a container context.
+[abstract]
 
-## Getting Started
+= Grasshopper
 
-Grasshopper is packaged as a container. End-users typically do not install the
-software from source. Instead use the Grasshopper container as the `FROM` line
-in your Dockerfile and package your application on top. For example:
+Grasshopper is an implementation of the http://www.projectatomic.io/docs/nulecule/[Nulecule Specification]. It can be
+used to bootstrap container applications and to install and run them. Grasshopper
+is designed to be run in a container context.
+
+== Getting Started
+
+Grasshopper is packaged as a container. End-users typically do not install
+the software from source. Instead use the Grasshopper container as the `FROM`
+line in your Dockerfile and package your application on top. For example:
 
 ```
-FROM goern/grasshopper:0.0.5
+FROM goern/grasshopper:0.0.20
 
 MAINTAINER Your Name <you@example.com>
 
@@ -21,18 +41,23 @@ To install your newly nuleculized application, simply call `atomic run myapp`.
 
 For a description of the lifecycle of a Nulecule, please refer to FIXME
 
-## Developers
+== Developers
 
-[![Build Status](https://travis-ci.org/goern/grasshopper.svg?branch=master)](https://travis-ci.org/goern/grasshopper)
-[![Coverage Status](https://coveralls.io/repos/goern/grasshopper/badge.svg?branch=master&service=github)](https://coveralls.io/github/goern/grasshopper?branch=master)
+image:https://travis-ci.org/goern/grasshopper.svg?branch=master["Build Status", link="https://travis-ci.org/goern/grasshopper"]
+image:https://coveralls.io/repos/goern/grasshopper/badge.svg?branch=master&service=github["Build Status", link="https://coveralls.io/github/goern/grasshopper?branch=master"]
 
 First of all, clone the github repository: `git clone https://github.com/goern/grasshopper`.
 
-### Build
+=== Build
 
 To build a Grasshopper base image just run `make image`, this will compile the
 Grasshopper binary and generate a Docker container image containing it.
 
+Grasshopper is also build on Fedora's wonderful COPR build service, therefor a
+SPEC file is provided.
+
+WARNING: Nevertheless a source RPM is provided containing all the source from
+github, the rpm build process itself is using `go get` to get the source.
 
 ### Test
 
@@ -40,20 +65,20 @@ There is a Makefile target called `test`, which will run all the GO tests. We ai
 to keep the test coverage over 75%.
 
 
-## Providers
+== Providers
 
 Providers represent various deployment targets.
 
-## Dependencies
+== Dependencies
 
 Please have a look at Godeps/Godeps.json to figure out the dependencies.
 
-##Communication channels
+== Communication channels
 
 * IRC: #nulecule (On Freenode)
 * Mailing List: N/A
 
-# Copyright
+= Copyright
 
 Copyright (C) 2015 Red Hat Inc.
 
