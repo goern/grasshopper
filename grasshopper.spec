@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.24
+Version:        0.0.25
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -8,7 +8,11 @@ URL:            https://github.com/goern/grasshopper
 Source0:        grasshopper-%{version}.tar.gz
 
 ExclusiveArch:  x86_64
-BuildRequires:	golang-bin git rubygem-asciidoctor
+BuildRequires:	golang-bin
+BuildRequires:  git
+BuildRequires:  asciidoc
+BuildRequires:  docbook-style-xsl
+BuildRequires:  libxslt
 Requires:       golang
 
 %ifarch x86_64
@@ -34,7 +38,11 @@ LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/goern/grasshopper
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
+a2x -d manpage -f manpage grasshopper.8.asciidoc
+
+%install
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
+cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -44,9 +52,9 @@ cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 
 %attr(0755,-,-) %{_bindir}/grasshopper-%{version}
 
-%doc AUTHORS
-%doc LICENSE
+%doc AUTHORS LICENSE
 %doc README.html
+%doc %{_mandir}/man8/grasshopper.8*
 
 %post
 alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper-{version} %{alternatives_priority}
@@ -55,8 +63,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.24-1
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.25-1
 - 
+
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.24-1
+-
 
 * Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.23-1
 -
