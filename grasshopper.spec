@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.16
+Version:        0.0.17
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -30,7 +30,7 @@ GOOS=linux
 GOARCH="%{GOARCH}"
 export GOPATH GOBIN GOOS GOARCH
 
-LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godeps
+LC_ALL=C PATH="$PATH:$GOBIN" go get go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 
@@ -53,8 +53,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.16-1
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.17-1
 - 
+
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.16-1
+-
 
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.12-1
 - add git as a build requirement, due to `go get` (goern@redhat.com)
