@@ -2,6 +2,7 @@
 Christoph Görn <goern@redhat.com>
 :description: Grasshopper is a GOlang based implementation of the Nulecule Specification.
 :doctype: book
+:title-logo: docs/images/grasshopper.png
 :compat-mode:
 :experimental:
 :listing-caption: Listing
@@ -21,6 +22,7 @@ endif::[]
 Grasshopper is an implementation of the http://www.projectatomic.io/docs/nulecule/[Nulecule Specification]. It can be
 used to bootstrap container applications and to install and run them. Grasshopper
 is designed to be run in a container context.
+
 
 == Getting Started
 
