@@ -51,7 +51,14 @@ func main() {
 		Short: "Print the version number of Grasshopper",
 		Long:  `All software has versions. This is the Grasshopper's`,
 		Run: func(cmd *cobra.Command, args []string) {
-			versionString := fmt.Sprintf("Grasshopper v%s (%s)", version, minversion)
+			versionString := ""
+
+			if Verbose {
+				versionString = fmt.Sprintf("Grasshopper v%s (%s)", version, minversion)
+			} else {
+				versionString = fmt.Sprintf("Grasshopper v%s", version)
+			}
+
 			fmt.Println(versionString)
 		},
 	}
@@ -70,6 +77,11 @@ func main() {
 	GrasshopperCmd.AddCommand(versionCmd)
 	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 	GrasshopperCmd.AddCommand(cmd.FetchCmd)
+	GrasshopperCmd.AddCommand(cmd.InstallCmd)
+	GrasshopperCmd.AddCommand(cmd.RunCmd)
+	GrasshopperCmd.AddCommand(cmd.StopCmd)
+	GrasshopperCmd.AddCommand(cmd.UninstallCmd)
+	GrasshopperCmd.AddCommand(cmd.CleanCmd)
 
 	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 
