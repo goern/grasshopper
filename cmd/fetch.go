@@ -27,8 +27,8 @@ import (
 
 var log = logging.MustGetLogger("grasshopper")
 
-//dryrun will force the fetchCmd to not do anything at all
-var dryrun bool
+//DryRun will force the fetchCmd to not do anything at all
+var DryRun bool
 
 //FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(cmd *cobra.Command, args []string) {
@@ -42,5 +42,3 @@ var FetchCmd = &cobra.Command{
 	Long:  `Will download from a URL and combine artifacts from the target application and any dependent applications.`,
 	Run:   FetchFunction,
 }
-
-// FetchCmd.Flags().StringVarP(&dryrun, "dry-run", "d", "", "do not really do anything")

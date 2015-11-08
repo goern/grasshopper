@@ -26,19 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//LifecycleFlagSet is applied to all Commands that operate on a provider and controll the lifecycle of an application within a provider's context
-/*
-func LifecycleFlagSet() []cli.Flag {
-	return []cli.Flag{
-		cli.StringFlag{
-			Name:   "provider",
-			Usage:  "The provider to use. Overrides provider value in answerfile.",
-			EnvVar: "GRASSHOPPER_PROVIDER",
-		},
-	}
-}
-*/
-
 //InstallCommand returns an initialized CLI install command
 var InstallCmd = &cobra.Command{
 	Use:   "install",

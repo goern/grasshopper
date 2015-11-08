@@ -36,6 +36,9 @@ var log = logging.MustGetLogger("grasshopper")
 //Verbose is a global --verbose command line thingy
 var Verbose bool
 
+//Provider is the provider to be used for install, run, stop, uninstall commands
+var Provider string
+
 func main() {
 	var GrasshopperCmd = &cobra.Command{
 		Use:   "grasshopper",
@@ -77,10 +80,20 @@ func main() {
 	GrasshopperCmd.AddCommand(versionCmd)
 	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 	GrasshopperCmd.AddCommand(cmd.FetchCmd)
+	cmd.FetchCmd.Flags().BoolVarP(&cmd.DryRun, "dry-run", "d", false, "dry run, just pretend to do something")
+
 	GrasshopperCmd.AddCommand(cmd.InstallCmd)
+	cmd.InstallCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+
 	GrasshopperCmd.AddCommand(cmd.RunCmd)
+	cmd.RunCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+
 	GrasshopperCmd.AddCommand(cmd.StopCmd)
+	cmd.StopCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+
 	GrasshopperCmd.AddCommand(cmd.UninstallCmd)
+	cmd.UninstallCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+
 	GrasshopperCmd.AddCommand(cmd.CleanCmd)
 
 	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
