@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.19
+Version:        0.0.20
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -54,6 +54,9 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.20-1
+- fix some more build path issues (goern@redhat.com)
+
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.12-1
 - add git as a build requirement, due to `go get` (goern@redhat.com)
 
