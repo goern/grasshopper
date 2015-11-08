@@ -23,6 +23,8 @@ Grasshopper is an implementation of the http://www.projectatomic.io/docs/nulecul
 used to bootstrap container applications and to install and run them. Grasshopper
 is designed to be run in a container context.
 
+.The Grasshopper
+image::docs/images/grasshopper.png[]
 
 == Getting Started
 
