@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.14
+Version:        0.0.15
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -7,7 +7,7 @@ License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
 Source0:        grasshopper-%{version}.tar.gz
 
-ExclusiveArch:  %{x8664}
+ExclusiveArch:  x86_64
 BuildRequires:	golang-bin git
 Requires:       golang
 
@@ -53,8 +53,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.14-1
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.15-1
 - 
+
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.14-1
+-
 
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.13-1
 - add GOSRC (goern@redhat.com)
