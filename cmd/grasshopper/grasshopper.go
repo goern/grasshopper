@@ -17,27 +17,20 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Package main is the main command line tool for Grasshopper.
+// Package grasshopper is the main command line tool for Grasshopper.
 package main
 
 import (
 	"fmt"
 
+	"github.com/goern/grasshopper/cmd"
 	"github.com/op/go-logging"
 	"github.com/spf13/cobra"
-
-	"github.com/goern/grasshopper/cmd"
 )
 
 var version string
 var minversion string
 var log = logging.MustGetLogger("grasshopper")
-
-//Verbose is a global --verbose command line thingy
-var Verbose bool
-
-//Provider is the provider to be used for install, run, stop, uninstall commands
-var Provider string
 
 func main() {
 	var GrasshopperCmd = &cobra.Command{
@@ -56,7 +49,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			versionString := ""
 
-			if Verbose {
+			if grasshopper.Verbose {
 				versionString = fmt.Sprintf("Grasshopper v%s (%s)", version, minversion)
 			} else {
 				versionString = fmt.Sprintf("Grasshopper v%s", version)
@@ -80,41 +73,24 @@ func main() {
 	GrasshopperCmd.AddCommand(versionCmd)
 	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 	GrasshopperCmd.AddCommand(cmd.FetchCmd)
-	cmd.FetchCmd.Flags().BoolVarP(&cmd.DryRun, "dry-run", "d", false, "dry run, just pretend to do something")
+	cmd.FetchCmd.Flags().BoolVarP(&grasshopper.DryRun, "dry-run", "d", false, "dry run, just pretend to do something")
 
 	GrasshopperCmd.AddCommand(cmd.InstallCmd)
-	cmd.InstallCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+	cmd.InstallCmd.Flags().StringVarP(&grasshopper.Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
 
 	GrasshopperCmd.AddCommand(cmd.RunCmd)
-	cmd.RunCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+	cmd.RunCmd.Flags().StringVarP(&grasshopper.Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
 
 	GrasshopperCmd.AddCommand(cmd.StopCmd)
-	cmd.StopCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+	cmd.StopCmd.Flags().StringVarP(&grasshopper.Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
 
 	GrasshopperCmd.AddCommand(cmd.UninstallCmd)
-	cmd.UninstallCmd.Flags().StringVarP(&Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
+	cmd.UninstallCmd.Flags().StringVarP(&grasshopper.Provider, "provider", "p", "kubernetes", "Provider to be used, it may be 'kubernetes', 'openshift' or 'docker'")
 
 	GrasshopperCmd.AddCommand(cmd.CleanCmd)
 
-	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&grasshopper.Verbose, "verbose", "v", false, "verbose output")
 
 	GrasshopperCmd.Execute()
 
-	/*
-
-		app.Commands = []cli.Command{
-			cmd.FetchCommand(),
-			cmd.InstallCommand(),
-			cmd.RunCommand(),
-			cmd.StopCommand(),
-			cmd.UninstallCommand(),
-			cmd.CleanCommand(),
-		}
-
-		app.Action = func(c *cli.Context) {
-			println("GO! I say!")
-		}
-
-		app.Run(os.Args)
-	*/
 }

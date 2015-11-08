@@ -17,28 +17,14 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package cmd
+// Package grasshopper is the main command line tool for Grasshopper.
+package grasshopper
 
-import (
-	"github.com/op/go-logging"
-	"github.com/spf13/cobra"
-	//  "github.com/hashicorp/go-getter"
-)
-
-var log = logging.MustGetLogger("grasshopper")
+//Verbose is a global --verbose command line thingy
+var Verbose bool
 
 //DryRun will force the fetchCmd to not do anything at all
 var DryRun bool
 
-//FetchFunction is the function that downloads all Nulecule container images
-func FetchFunction(cmd *cobra.Command, args []string) {
-	log.Info("fetching: ", args[0])
-}
-
-//FetchCmd returns an initialized CLI fetch command
-var FetchCmd = &cobra.Command{
-	Use:   "fetch",
-	Short: "Download application from URL",
-	Long:  `Will download from a URL and combine artifacts from the target application and any dependent applications.`,
-	Run:   FetchFunction,
-}
+//Provider is the provider to be used for install, run, stop, uninstall commands
+var Provider string
