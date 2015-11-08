@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.20
+Version:        0.0.21
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -54,6 +54,14 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.21-1
+- fix the copr releaser (goern@redhat.com)
+- change from Markdown to Asciidoc (goern@redhat.com)
+
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com>
+- fix the copr releaser (goern@redhat.com)
+- change from Markdown to Asciidoc (goern@redhat.com)
+
 * Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.20-1
 - fix some more build path issues (goern@redhat.com)
 
