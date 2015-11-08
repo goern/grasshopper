@@ -21,53 +21,75 @@
 package main
 
 import (
-	"os"
-	"time"
+	"fmt"
 
-	"github.com/codegangsta/cli"
-	"github.com/goern/grasshopper/cmd"
-	"github.com/goern/grasshopper/nulecule"
 	"github.com/op/go-logging"
+	"github.com/spf13/cobra"
+
+	"github.com/goern/grasshopper/cmd"
 )
 
+var version string
+var minversion string
 var log = logging.MustGetLogger("grasshopper")
 
+//Verbose is a global --verbose command line thingy
+var Verbose bool
+
 func main() {
-	app := cli.NewApp()
-
-	app.Name = "grasshopper"
-	app.Version = nulecule.GrasshopperVersion
-	app.Compiled = time.Now()
-	app.Usage = "make a Nulecule go!"
-	app.Authors = []cli.Author{
-		{
-			Name:  "Christoph Görn",
-			Email: "goern@redhat.com",
+	var GrasshopperCmd = &cobra.Command{
+		Use:   "grasshopper",
+		Short: "make a Nulecule GO!",
+		Long:  `Grasshopper is a GOlang implementation of the Nulecule Specification.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			// Do Stuff Here
 		},
 	}
 
-	app.EnableBashCompletion = true
-
-	// global level flags
-	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "verbose",
-			Usage: "Show more output.",
+	var versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number of Grasshopper",
+		Long:  `All software has versions. This is the Grasshopper's`,
+		Run: func(cmd *cobra.Command, args []string) {
+			versionString := fmt.Sprintf("Grasshopper v%s (%s)", version, minversion)
+			fmt.Println(versionString)
 		},
 	}
 
-	app.Commands = []cli.Command{
-		cmd.FetchCommand(),
-		cmd.InstallCommand(),
-		cmd.RunCommand(),
-		cmd.StopCommand(),
-		cmd.UninstallCommand(),
-		cmd.CleanCommand(),
+	var bashAutogenerateCmd = &cobra.Command{
+		Use:   "generate-bash-autocompletion",
+		Short: "Generate an autocompletion bash shell script",
+		Long:  "This will generate an autocompletion bash shell script in the current directory.",
+		Run: func(cmd *cobra.Command, args []string) {
+			GrasshopperCmd.GenBashCompletionFile("grasshopper_autocompletion.sh")
+		},
 	}
 
-	app.Action = func(c *cli.Context) {
-		println("GO! I say!")
-	}
+	GrasshopperCmd.SuggestionsMinimumDistance = 1
 
-	app.Run(os.Args)
+	GrasshopperCmd.AddCommand(versionCmd)
+	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
+	GrasshopperCmd.AddCommand(cmd.FetchCmd)
+
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+
+	GrasshopperCmd.Execute()
+
+	/*
+
+		app.Commands = []cli.Command{
+			cmd.FetchCommand(),
+			cmd.InstallCommand(),
+			cmd.RunCommand(),
+			cmd.StopCommand(),
+			cmd.UninstallCommand(),
+			cmd.CleanCommand(),
+		}
+
+		app.Action = func(c *cli.Context) {
+			println("GO! I say!")
+		}
+
+		app.Run(os.Args)
+	*/
 }

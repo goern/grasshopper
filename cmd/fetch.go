@@ -20,39 +20,27 @@
 package cmd
 
 import (
-	"github.com/codegangsta/cli"
 	"github.com/op/go-logging"
+	"github.com/spf13/cobra"
 	//  "github.com/hashicorp/go-getter"
 )
 
 var log = logging.MustGetLogger("grasshopper")
 
-//FetchFlagSet lists flags that are only valid for the fetch command.
-func FetchFlagSet() []cli.Flag {
-	return []cli.Flag{
-		cli.BoolFlag{
-			Name:  "dry-run",
-			Usage: "This will cause fetch to not do anything, nor fetch something.",
-		},
-	}
-}
+//Dryrun will force the fetchCmd to not do anything at all
+var Dryrun bool
 
 //FetchFunction is the function that downloads all Nulecule container images
-func FetchFunction(c *cli.Context) {
-	if len(c.Args()) < 1 {
-		cli.ShowCommandHelp(c, "fetch")
-		log.Critical("Please provide an Application (by URL) to fetch.")
-	} else {
-		log.Info("fetching: ", c.Args().First())
-	}
+func FetchFunction(cmd *cobra.Command, args []string) {
+	log.Info("fetching: ", args[0])
 }
 
-//FetchCommand returns an initialized CLI fetch command
-func FetchCommand() cli.Command {
-	return cli.Command{
-		Name:   "fetch",
-		Usage:  "Will download from a URL and combine artifacts from the target application and any dependent applications.",
-		Action: FetchFunction,
-		Flags:  FetchFlagSet(),
-	}
+//FetchCmd returns an initialized CLI fetch command
+var FetchCmd = &cobra.Command{
+	Use:   "fetch",
+	Short: "Download application from URL",
+	Long:  `Will download from a URL and combine artifacts from the target application and any dependent applications.`,
+	Run:   FetchFunction,
 }
+
+//fetchCmd.Flags().StringVarP(&Dryrun, "dry-run", "d", "", "do not really do anything")
