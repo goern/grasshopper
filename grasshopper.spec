@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.13
+Version:        0.0.14
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -7,11 +7,12 @@ License:        LGPLv3+
 URL:            https://github.com/goern/grasshopper
 Source0:        grasshopper-%{version}.tar.gz
 
+ExclusiveArch:  %{x8664}
 BuildRequires:	golang-bin git
 Requires:       golang
 
 %ifarch x86_64
-    %global GOARCH amd64
+  %global GOARCH amd64
 %endif
 
 %description
@@ -23,16 +24,14 @@ This will make a Nulecule GO!
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
-GOPATH="$(pwd)"
-GOSRC="$(pwd)"
-GOBIN="$GOPATH/bin"
+GOROOT="$(pwd)"
+GOBIN="$GOROOT/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
-export GOPATH GOSRC GOBIN GOOS GOARCH
+export GOROOT GOBIN GOOS GOARCH
 
-LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
-LC_ALL=C PATH="$PATH:$GOBIN" godep restore
-LC_ALL=C PATH="$PATH:$GOBIN" make
+LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godeps
+LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 
 %clean
@@ -54,6 +53,9 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.14-1
+- 
+
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.13-1
 - add GOSRC (goern@redhat.com)
 
