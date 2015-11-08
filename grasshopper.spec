@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.23
+Version:        0.0.24
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -32,7 +32,8 @@ export GOPATH GOBIN GOOS GOARCH
 
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/goern/grasshopper
-LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make make doc
+LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
+LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 
 %clean
@@ -54,8 +55,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.23-1
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.24-1
 - 
+
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.23-1
+-
 
 * Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.22-1
 - update to build with GO 1.5.1 (goern@redhat.com)
