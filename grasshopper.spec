@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.15
+Version:        0.0.16
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -24,11 +24,11 @@ This will make a Nulecule GO!
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 
 %build
-GOROOT="$(pwd)"
-GOBIN="$GOROOT/bin"
+GOPATH="$(pwd)"
+GOBIN="$GOPATH/bin"
 GOOS=linux
 GOARCH="%{GOARCH}"
-export GOROOT GOBIN GOOS GOARCH
+export GOPATH GOBIN GOOS GOARCH
 
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godeps
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
@@ -53,23 +53,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.15-1
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.16-1
 - 
-
-* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.14-1
--
-
-* Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.13-1
-- add GOSRC (goern@redhat.com)
 
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.12-1
 - add git as a build requirement, due to `go get` (goern@redhat.com)
-
-* Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.11-1
-- rename to GOPATH, its not GOROOT stupid! (goern@redhat.com)
-
-* Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.10-1
-- cleanup the GO env (goern@redhat.com)
 
 * Wed Nov 04 2015 Christoph Görn <goern@redhat.com> 0.0.9-1
 - add godep as a build step (goern@redhat.com)
