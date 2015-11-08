@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.25
+Version:        0.0.26
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -63,6 +63,10 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.26-1
+- add grasshopper image (goern@redhat.com)
+- some more on doc (goern@redhat.com)
+
 * Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.25-1
 - 
 
