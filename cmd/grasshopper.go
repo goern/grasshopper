@@ -124,6 +124,16 @@ func Execute() {
 	fmt.Println(out.String())
 	*/
 
+	/* FIxME this is nice, but we need a better one!
+	manHeader := &cobra.GenManHeader{
+		Title:   "grasshopper",
+		Section: "1",
+	}
+	out := new(bytes.Buffer)
+	GrasshopperCmd.GenMan(manHeader, out)
+	fmt.Println(out.String())
+	*/
+
 	if err := GrasshopperCmd.Execute(); err != nil {
 		// the err is already logged by Cobra
 		os.Exit(-1)
