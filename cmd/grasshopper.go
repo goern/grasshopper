@@ -96,6 +96,8 @@ func Execute() {
 	// FIXME unsupported bashAutogenerateCmd
 	// GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 
+	GrasshopperCmd.AddCommand(IndexCmd)
+
 	GrasshopperCmd.AddCommand(FetchCmd)
 	GrasshopperCmd.AddCommand(InstallCmd)
 	GrasshopperCmd.AddCommand(RunCmd)
