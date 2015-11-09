@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.30
+Version:        0.0.31
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -63,6 +63,9 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.31-1
+- add viper based runtimeconfig (goern@redhat.com)
+
 * Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.30-1
 - bounce to 0.0.30 (goern@redhat.com)
 - finish adding cobra based commands, flags still missing (goern@redhat.com)
