@@ -6,6 +6,11 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-21-g056c9bc",
+			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
+		},
+		{
 			"ImportPath": "github.com/cpuguy83/go-md2man/md2man",
 			"Comment": "v1.0.4",
 			"Rev": "71acacd42f85e5e82f70a55327789582a5200a90"
@@ -23,6 +28,24 @@
 			"Rev": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
 		},
 		{
+			"ImportPath": "github.com/kr/pretty",
+			"Comment": "go.weekly.2011-12-22-27-ge6ac2fc",
+			"Rev": "e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb"
+		},
+		{
+			"ImportPath": "github.com/kr/text",
+			"Rev": "bb797dc4fb8320488f47bf11de07a733d7233e1f"
+		},
+		{
+			"ImportPath": "github.com/magiconair/properties",
+			"Comment": "v1.5.4-10-g6ac0b95",
+			"Rev": "6ac0b95f449268951dd5c100682ea687a9866ea1"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
+		},
+		{
 			"ImportPath": "github.com/op/go-logging",
 			"Rev": "e8d5414f0947014548c2334044a0fac13187dfee"
 		},
@@ -36,12 +59,24 @@
 			"Rev": "10ef21a441db47d8b13ebcc5fd2310f636973c77"
 		},
 		{
+			"ImportPath": "github.com/spf13/cast",
+			"Rev": "ee815aaf958c707ad07547cd62150d973710f747"
+		},
+		{
 			"ImportPath": "github.com/spf13/cobra",
 			"Rev": "2e6a42892123dda608922f8af8ce85c3bff19575"
 		},
 		{
+			"ImportPath": "github.com/spf13/jwalterweatherman",
+			"Rev": "3d60171a64319ef63c78bd45bd60e6eab1e75f8b"
+		},
+		{
 			"ImportPath": "github.com/spf13/pflag",
 			"Rev": "08b1a584251b5b62f458943640fc8ebd4d50aaa5"
+		},
+		{
+			"ImportPath": "github.com/spf13/viper",
+			"Rev": "d2f75b4befcf56b1627807acc5f10fd19e9784cf"
 		},
 		{
 			"ImportPath": "github.com/stretchr/testify/assert",
