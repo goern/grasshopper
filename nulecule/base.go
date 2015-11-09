@@ -71,7 +71,7 @@ type License struct {
 type Param struct {
 	Name        string
 	Description string
-	Constraints []Constraint
+	Constraints Constraint `yaml:"constraints"`
 	Default     string
 	Hidden      bool
 }
