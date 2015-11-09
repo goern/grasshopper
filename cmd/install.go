@@ -20,18 +20,25 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
+	jww "github.com/spf13/jwalterweatherman"
 )
 
 //InstallCommand returns an initialized CLI install command
 var InstallCmd = &cobra.Command{
-	Use:   "install",
+	Use:   "install APPNAME",
 	Short: "install application",
-	Long:  "Peform actions to prepare application to run.",
+	Long:  "Peform actions to prepare application APPNAME to be run.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("running: " + strings.Join(args, " "))
+		InitializeConfig()
+
+		if len(args) < 1 {
+			cmd.Usage()
+			jww.FATAL.Println("path URL to be fetched")
+		}
+
+		jww.INFO.Println("running: " + strings.Join(args, " "))
 	},
 }
