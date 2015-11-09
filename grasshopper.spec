@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.31
+Version:        0.0.32
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -63,6 +63,22 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.32-1
+- add some manpagegeneration foo but dont use it (goern@redhat.com)
+- add index info (goern@redhat.com)
+- fix the Makefile: always require GRASSHOPPER_VERSION set on a `make` call
+  (goern@redhat.com)
+- disable certificate validation (goern@redhat.com)
+- implement nulecule-library index list (goern@redhat.com)
+
+* Mon Nov 09 2015 Christoph Görn <goern@redhat.com>
+- add some manpagegeneration foo but dont use it (goern@redhat.com)
+- add index info (goern@redhat.com)
+- fix the Makefile: always require GRASSHOPPER_VERSION set on a `make` call
+  (goern@redhat.com)
+- disable certificate validation (goern@redhat.com)
+- implement nulecule-library index list (goern@redhat.com)
+
 * Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.31-1
 - add viper based runtimeconfig (goern@redhat.com)
 
