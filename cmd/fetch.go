@@ -20,7 +20,6 @@
 package cmd
 
 import (
-	"github.com/goern/grasshopper"
 	"github.com/op/go-logging"
 	"github.com/spf13/cobra"
 	//  "github.com/hashicorp/go-getter"
@@ -30,10 +29,6 @@ var log = logging.MustGetLogger("grasshopper")
 
 //FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(cmd *cobra.Command, args []string) {
-	if grasshopper.Verbose {
-		log.Debug("FetchFunction() is in verbose mode!")
-	}
-
 	log.Info("fetching: ", args[0])
 }
 
