@@ -63,6 +63,12 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.30-1
+- bounce to 0.0.30 (goern@redhat.com)
+- finish adding cobra based commands, flags still missing (goern@redhat.com)
+- heavy src reorg (goern@redhat.com)
+- move files, this should be more like real go (goern@redhat.com)
+
 * Sun Nov 08 2015 Christoph Görn <goern@redhat.com> 0.0.27rc1-1
 - add the provider flag (goern@redhat.com)
 - fix travis setup (goern@redhat.com)
