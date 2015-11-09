@@ -96,6 +96,8 @@ func Execute() {
 	// FIXME unsupported bashAutogenerateCmd
 	// GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 
+	GrasshopperCmd.AddCommand(IndexCmd)
+
 	GrasshopperCmd.AddCommand(FetchCmd)
 	GrasshopperCmd.AddCommand(InstallCmd)
 	GrasshopperCmd.AddCommand(RunCmd)
@@ -103,10 +105,21 @@ func Execute() {
 	GrasshopperCmd.AddCommand(UninstallCmd)
 	GrasshopperCmd.AddCommand(CleanCmd)
 
+	/* FIxME this is nice, but we need a better one!
+	manHeader := &cobra.GenManHeader{
+		Title:   "grasshopper",
+		Section: "1",
+	}
+	out := new(bytes.Buffer)
+	GrasshopperCmd.GenMan(manHeader, out)
+	fmt.Println(out.String())
+	*/
+
 	if err := GrasshopperCmd.Execute(); err != nil {
 		// the err is already logged by Cobra
 		os.Exit(-1)
 	}
+
 }
 
 // InitializeConfig initializes a config file with sensible default configuration flags.

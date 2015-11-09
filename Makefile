@@ -5,7 +5,7 @@ OUT_PKG_DIR=Godeps/_workspace/pkg
 GRASSHOPPER_MIN_VERSION=$(shell date -u +%Y%m%d.%H%M%S)
 
 .PHONY: all build
-all build: main.go check-grasshopper-version
+all build: main.go
 	godep restore
 	CGO_ENABLED=0 go build --ldflags '-extldflags "-static" -X main.minversion=$(GRASSHOPPER_MIN_VERSION) -X main.version=$(GRASSHOPPER_VERSION)'
 
@@ -16,7 +16,7 @@ test:
 .PHONY: image
 image: build test
 	strip grasshopper
-	docker build --rm --tag goern/grasshopper:$GRASSHOPPER_VERSION -f Dockerfile .
+	docker build --rm --tag goern/grasshopper:$(GRASSHOPPER_VERSION) -f Dockerfile .
 
 .PHONY: doc
 doc:
@@ -29,12 +29,4 @@ clean:
 
 .PHONY: clean-image
 clean-image:
-	docker rmi goern/grasshopper:$GRASSHOPPER_VERSION
-
-# FIXME this whole block needs some love
-.PHONY: check-grasshopper-version
-check-grasshopper-version:
-ifndef GRASSHOPPER_VERSION
-	GRASSHOPPER_VERSION=0.0.99-alpha
-	export GRASSHOPPER_VERSION
-endif
+	docker rmi goern/grasshopper:$(GRASSHOPPER_VERSION)

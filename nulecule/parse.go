@@ -24,7 +24,7 @@ func Parse(r io.Reader) (*ContainerApplication, error) {
 	unmarschalError := yaml.Unmarshal(data, &app)
 
 	if unmarschalError != nil {
-		log.Fatal(unmarschalError)
+		log.Print(unmarschalError)
 	}
 
 	// TODO before returning we should do some sanity checks, like: specversion equals grasshopper supported spec
