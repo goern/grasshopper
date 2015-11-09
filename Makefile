@@ -16,7 +16,7 @@ test:
 .PHONY: image
 image: build test
 	strip grasshopper
-	docker build --rm --tag goern/grasshopper:$GRASSHOPPER_VERSION -f Dockerfile .
+	docker build --rm --tag goern/grasshopper:$(GRASSHOPPER_VERSION) -f Dockerfile .
 
 .PHONY: doc
 doc:
@@ -29,12 +29,4 @@ clean:
 
 .PHONY: clean-image
 clean-image:
-	docker rmi goern/grasshopper:$GRASSHOPPER_VERSION
-
-# FIXME this whole block needs some love
-.PHONY: check-grasshopper-version
-check-grasshopper-version:
-ifndef GRASSHOPPER_VERSION
-	GRASSHOPPER_VERSION=0.0.99-alpha
-	export GRASSHOPPER_VERSION
-endif
+	docker rmi goern/grasshopper:$(GRASSHOPPER_VERSION)
