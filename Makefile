@@ -5,7 +5,7 @@ OUT_PKG_DIR=Godeps/_workspace/pkg
 GRASSHOPPER_MIN_VERSION=$(shell date -u +%Y%m%d.%H%M%S)
 
 .PHONY: all build
-all build: main.go check-grasshopper-version
+all build: main.go
 	godep restore
 	CGO_ENABLED=0 go build --ldflags '-extldflags "-static" -X main.minversion=$(GRASSHOPPER_MIN_VERSION) -X main.version=$(GRASSHOPPER_VERSION)'
 
