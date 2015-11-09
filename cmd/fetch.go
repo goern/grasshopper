@@ -20,22 +20,35 @@
 package cmd
 
 import (
-	"github.com/op/go-logging"
+	"strings"
+
 	"github.com/spf13/cobra"
-	//  "github.com/hashicorp/go-getter"
+	jww "github.com/spf13/jwalterweatherman"
 )
 
-var log = logging.MustGetLogger("grasshopper")
+func doFetchFromURL(URL string) {
+	// TODO get a from from a URL via "github.com/hashicorp/go-getter"
+}
 
 //FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(cmd *cobra.Command, args []string) {
-	log.Info("fetching: ", args[0])
+	if Verbose {
+		jww.SetLogThreshold(jww.LevelTrace)
+		jww.SetStdoutThreshold(jww.LevelInfo)
+	}
+
+	if len(args) < 1 {
+		cmd.Usage()
+		jww.FATAL.Println("URL to be fetched is missing")
+	}
+
+	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
 }
 
 //FetchCmd returns an initialized CLI fetch command
 var FetchCmd = &cobra.Command{
-	Use:   "fetch",
+	Use:   "fetch URL",
 	Short: "Download application from URL",
-	Long:  `Will download from a URL and combine artifacts from the target application and any dependent applications.`,
+	Long:  `Will download an application from a URL and combine artifacts from the target application and any dependent applications.`,
 	Run:   FetchFunction,
 }
