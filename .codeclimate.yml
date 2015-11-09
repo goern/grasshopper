@@ -1,0 +1,10 @@
+engines:
+  golint:
+    enabled: true
+  gofmt:
+    enabled: true
+ratings:
+   paths:
+   - cmd/**
+   - nulecule/**
+   - "**.go"
