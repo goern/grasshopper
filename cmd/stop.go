@@ -19,16 +19,19 @@
 
 package cmd
 
-import "github.com/codegangsta/cli"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+)
 
 //StopCommand returns an initialized CLI stop command
-func StopCommand() cli.Command {
-	return cli.Command{
-		Name:  "stop",
-		Usage: "Stop an application.",
-		Action: func(c *cli.Context) {
-			println("stopping: ", c.Args().First())
-		},
-		Flags: LifecycleFlagSet(),
-	}
+var StopCmd = &cobra.Command{
+	Use:   "stop",
+	Short: "Stop application",
+	Long:  "Stop an Application using via a Provider.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("stopping: " + strings.Join(args, " "))
+	},
 }

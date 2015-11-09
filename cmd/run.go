@@ -19,16 +19,19 @@
 
 package cmd
 
-import "github.com/codegangsta/cli"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+)
 
 //RunCommand returns an initialized CLI run command
-func RunCommand() cli.Command {
-	return cli.Command{
-		Name:  "run",
-		Usage: "Run an application.",
-		Action: func(c *cli.Context) {
-			println("running: ", c.Args().First())
-		},
-		Flags: LifecycleFlagSet(),
-	}
+var RunCmd = &cobra.Command{
+	Use:   "run",
+	Short: "run application",
+	Long:  "Run an Application using via a Provider.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("running: " + strings.Join(args, " "))
+	},
 }

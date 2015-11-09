@@ -19,15 +19,19 @@
 
 package cmd
 
-import "github.com/codegangsta/cli"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+)
 
 //CleanCommand returns an initialized CLI clean command
-func CleanCommand() cli.Command {
-	return cli.Command{
-		Name:  "clean",
-		Usage: "Remove artifacts files from local system and clean up directory.",
-		Action: func(c *cli.Context) {
-			println("cleaning: ", c.Args().First())
-		},
-	}
+var CleanCmd = &cobra.Command{
+	Use:   "clean",
+	Short: "Remove artifacts",
+	Long:  "Remove artifacts files from local system and clean up directory.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("cleaning: " + strings.Join(args, " "))
+	},
 }

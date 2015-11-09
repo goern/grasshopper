@@ -19,16 +19,19 @@
 
 package cmd
 
-import "github.com/codegangsta/cli"
+import (
+	"fmt"
+	"strings"
 
-//UninstallCommand returns an initialized CLI uninstall command
-func UninstallCommand() cli.Command {
-	return cli.Command{
-		Name:  "uninstall",
-		Usage: "Remove deployment configuration from platform.",
-		Action: func(c *cli.Context) {
-			println("uninstalling: ", c.Args().First())
-		},
-		Flags: LifecycleFlagSet(),
-	}
+	"github.com/spf13/cobra"
+)
+
+//UninstallCommand returns an initialized CLI install command
+var UninstallCmd = &cobra.Command{
+	Use:   "uninstall",
+	Short: "uninstall application",
+	Long:  "Remove deployment configuration from platform.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("uninstalling: " + strings.Join(args, " "))
+	},
 }

@@ -19,27 +19,19 @@
 
 package cmd
 
-import "github.com/codegangsta/cli"
+import (
+	"fmt"
+	"strings"
 
-//LifecycleFlagSet is applied to all Commands that operate on a provider and controll the lifecycle of an application within a provider's context
-func LifecycleFlagSet() []cli.Flag {
-	return []cli.Flag{
-		cli.StringFlag{
-			Name:   "provider",
-			Usage:  "The provider to use. Overrides provider value in answerfile.",
-			EnvVar: "GRASSHOPPER_PROVIDER",
-		},
-	}
-}
+	"github.com/spf13/cobra"
+)
 
 //InstallCommand returns an initialized CLI install command
-func InstallCommand() cli.Command {
-	return cli.Command{
-		Name:  "install",
-		Usage: "Peform actions to prepare application to run.",
-		Action: func(c *cli.Context) {
-			println("installing: ", c.Args().First())
-		},
-		Flags: LifecycleFlagSet(),
-	}
+var InstallCmd = &cobra.Command{
+	Use:   "install",
+	Short: "install application",
+	Long:  "Peform actions to prepare application to run.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("running: " + strings.Join(args, " "))
+	},
 }
