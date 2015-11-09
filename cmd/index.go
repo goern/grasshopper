@@ -22,6 +22,7 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
+	"crypto/tls"
 	"io/ioutil"
 	"net/http"
 
@@ -59,7 +60,12 @@ var indexListCmd = &cobra.Command{
 			jww.SetStdoutThreshold(jww.LevelInfo)
 		}
 
-		res, err := http.Get("https://github.com/projectatomic/nulecule-library/archive/master.zip")
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Transport: tr}
+
+		res, err := client.Get("https://github.com/projectatomic/nulecule-library/archive/master.zip")
 		if err != nil {
 			jww.FATAL.Printf("Fetching Nulecule Library zip URL failed with error %q\n", err)
 		}
