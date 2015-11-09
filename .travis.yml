@@ -4,11 +4,13 @@ go:
 - 1.5.1
 install:
 - go get golang.org/x/tools/cmd/cover
-- go get -v github.com/axw/gocov/gocov
-- go get -v github.com/mattn/goveralls
+- go get github.com/axw/gocov/gocov
+- go get github.com/mattn/goveralls
 - go get github.com/codegangsta/cli
 - go get github.com/op/go-logging
 - go get github.com/stretchr/testify/assert
+- go get github.com/hashicorp/go-multierror
+- go get gopkg.in/yaml.v2
 - go get github.com/goern/grasshopper
 script:
 - go test -v -covermode=count -coverprofile=profile.cov github.com/goern/grasshopper/nulecule
