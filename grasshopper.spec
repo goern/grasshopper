@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.33
+Version:        0.0.34
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -39,8 +39,6 @@ LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/goern/grasshopper
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
 a2x -d manpage -f manpage grasshopper.8.asciidoc
-
-%install
 cp grasshopper $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
@@ -63,16 +61,15 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.34-1
+- 
+
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
 - started implementing a guess command (goern@redhat.com)
-- f.ejkd.ejrenf (goern@redhat.com)
-- add a codeclimate config (goern@redhat.com)
 
 * Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.32-1
 - add some manpagegeneration foo but dont use it (goern@redhat.com)
 - add index info (goern@redhat.com)
-- fix the Makefile: always require GRASSHOPPER_VERSION set on a `make` call
-  (goern@redhat.com)
 - disable certificate validation (goern@redhat.com)
 - implement nulecule-library index list (goern@redhat.com)
 
