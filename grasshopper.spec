@@ -41,7 +41,7 @@ LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
 a2x -d manpage -f manpage grasshopper.8.asciidoc
 
 %install
-cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
+cp grasshopper $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
 cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
 %clean

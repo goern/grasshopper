@@ -205,9 +205,148 @@ _grasshopper_generate-bash-autocompletion()
     must_have_one_noun=()
 }
 
+_grasshopper_index_list()
+{
+    last_command="grasshopper_index_list"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_index_info()
+{
+    last_command="grasshopper_index_info"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_index()
+{
+    last_command="grasshopper_index"
+    commands=()
+    commands+=("list")
+    commands+=("info")
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
 _grasshopper_fetch()
 {
     last_command="grasshopper_fetch"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+    flags+=("-y")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_install()
+{
+    last_command="grasshopper_install"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_run()
+{
+    last_command="grasshopper_run"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_stop()
+{
+    last_command="grasshopper_stop"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_uninstall()
+{
+    last_command="grasshopper_uninstall"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_clean()
+{
+    last_command="grasshopper_clean"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+}
+
+_grasshopper_guess()
+{
+    last_command="grasshopper_guess"
     commands=()
 
     flags=()
@@ -226,13 +365,22 @@ _grasshopper()
     commands=()
     commands+=("version")
     commands+=("generate-bash-autocompletion")
+    commands+=("index")
     commands+=("fetch")
+    commands+=("install")
+    commands+=("run")
+    commands+=("stop")
+    commands+=("uninstall")
+    commands+=("clean")
+    commands+=("guess")
 
     flags=()
     two_word_flags=()
     flags_with_completion=()
     flags_completion=()
 
+    flags+=("--log")
+    flags+=("-l")
     flags+=("--verbose")
     flags+=("-v")
 

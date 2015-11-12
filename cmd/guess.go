@@ -20,25 +20,33 @@
 package cmd
 
 import (
-	"strings"
-
+	"github.com/goern/grasshopper/nulecule/utils"
 	"github.com/spf13/cobra"
 	jww "github.com/spf13/jwalterweatherman"
 )
 
-//InstallCmd returns an initialized CLI install command
-var InstallCmd = &cobra.Command{
-	Use:   "install APPNAME",
-	Short: "install application",
-	Long:  "Peform actions to prepare application APPNAME to be run.",
+//GuessCmd returns an initialized guess command
+var GuessCmd = &cobra.Command{
+	Use:   "guess DOCKERFILE",
+	Short: "guess something from a DOCKERFILE",
+	Long:  "Guess some information from a Dockerfile that can be handy in a Nulecule.",
 	Run: func(cmd *cobra.Command, args []string) {
 		InitializeConfig()
 
+		// figure out if a Dockerfile was provided
 		if len(args) < 1 {
 			cmd.Usage()
-			jww.FATAL.Println("path URL to be fetched")
+			jww.FATAL.Println("path to a Dockerfile is required but not supplied")
 		}
 
-		jww.INFO.Println("running: " + strings.Join(args, " "))
+		// if we got a Dockerfile
+		jww.INFO.Println("guessing from " + string(args[0]))
+
+		guess, err := utils.GuessFromDockerfile(args[0])
+		if err != nil {
+			jww.FATAL.Println("failed to read the Dockerfile, nothing guessed")
+		}
+
+		jww.DEBUG.Println(guess)
 	},
 }
