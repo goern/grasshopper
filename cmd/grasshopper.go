@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -36,6 +37,11 @@ var GrasshopperCmd = &cobra.Command{
 	Short: "make a Nulecule GO!",
 	Long:  `Grasshopper is a GOlang implementation of the Nulecule Specification.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(`Grasshopper  Copyright (C) 2015  Christoph Görn
+This program comes with ABSOLUTELY NO WARRANTY; for details use 'grasshopper --help'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; use 'grasshopper show license' for details.`)
+
 		InitializeConfig()
 	},
 }
@@ -88,14 +94,14 @@ func Execute() {
 		jww.SetLogFile("grasshopper.log")
 	}
 
-	jww.DEBUG.Println("Gentlemen, start your engines!!")
+	jww.INFO.Printf("The Grasshopper has started at %s\n", time.Now())
+
 	GrasshopperCmd.SuggestionsMinimumDistance = 1
 
 	//add child commands to the root command.
 	GrasshopperCmd.AddCommand(versionCmd)
 
-	// FIXME unsupported bashAutogenerateCmd
-	// GrasshopperCmd.AddCommand(bashAutogenerateCmd)
+	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 
 	GrasshopperCmd.AddCommand(IndexCmd)
 
@@ -105,6 +111,8 @@ func Execute() {
 	GrasshopperCmd.AddCommand(StopCmd)
 	GrasshopperCmd.AddCommand(UninstallCmd)
 	GrasshopperCmd.AddCommand(CleanCmd)
+
+	GrasshopperCmd.AddCommand(GuessCmd)
 
 	/* FIxME this is nice, but we need a better one!
 	manHeader := &cobra.GenManHeader{
