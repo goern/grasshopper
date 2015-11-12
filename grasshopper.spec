@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.39
+Version:        0.0.40
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -63,11 +63,8 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.39-1
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.40-1
 - 
-
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.38-1
--
 
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
 - started implementing a guess command (goern@redhat.com)
