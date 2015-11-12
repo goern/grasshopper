@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.36
+Version:        0.0.37
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -40,6 +40,7 @@ LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
 ls -la
 cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
+mkdir -p %{buildroot}/%{_mandir}/man8/
 cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
 %clean
@@ -61,8 +62,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.36-1
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.37-1
 - 
+
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.36-1
+-
 
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.35-1
 -
