@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.40
+Version:        0.0.41
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -14,6 +14,8 @@ BuildRequires:  asciidoc
 BuildRequires:  docbook-style-xsl
 BuildRequires:  libxslt
 Requires:       golang
+Requires(post): %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
 
 %global alternatives_priority 16
 
@@ -48,22 +50,26 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(0644,root,root,0755)
+%ghost %{_bindir}/%{name}
 
-%attr(0755,-,-) %{_bindir}/grasshopper-%{version}
+%defattr(0644,root,root,0755)
+%attr(0755,-,-) %{_bindir}/%{name}-%{version}
 
 %doc AUTHORS LICENSE
 %doc README.html
 %doc %{_mandir}/man8/grasshopper.8*
 
 %post
-alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper-%{version} %{alternatives_priority}
+%{_sbindir}/update-alternatives --install %{_bindir}/%{name} \
+  %{name} %{_bindir}/%{name}-%{version} 10
 
 %preun
-alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
+if [ $1 -eq 0 ] ; then
+  %{_sbindir}/update-alternatives --remove %{name} %{_bindir}/%{name}-%{version}
+fi
 
 %changelog
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.40-1
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.41-1
 - 
 
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
