@@ -20,12 +20,7 @@
 // Package main is the main command line tool for Grasshopper.
 package main
 
-import (
-	"github.com/goern/grasshopper/cmd"
-	"github.com/op/go-logging"
-)
-
-var log = logging.MustGetLogger("grasshopper")
+import "github.com/goern/grasshopper/cmd"
 
 func main() {
 	cmd.Execute() // !!

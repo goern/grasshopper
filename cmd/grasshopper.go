@@ -54,9 +54,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of Grasshopper",
 	Long:  "All software has versions. This is the Grasshopper's",
 	Run: func(cmd *cobra.Command, args []string) {
-		versionString := fmt.Sprintf("Grasshopper %s (%s)", version, minversion)
-
-		fmt.Println(versionString)
+		fmt.Printf("Grasshopper %s (%s)\n", version, minversion)
 	},
 }
 
@@ -80,8 +78,8 @@ var DryRun bool
 //DoLog will write to a temporary logfile
 var DoLog bool
 
-var version string
-var minversion string
+var version string    // set by -X via Makefile
+var minversion string // set by -X via Makefile
 
 //Execute adds all child commands to the root command GrasshopperCmd and sets flags appropriately.
 func Execute() {

@@ -15,13 +15,19 @@ grasshopper
 DESCRIPTION
 -----------
 
-Grasshopper will make your Nulecule GO!
+Grasshopper will make your Nulecule GO! It is will configure and deploy a multi
+container application (compliant with the Nulecule Specification) to a specified
+provider.
+
+grasshopper is supposed to be used in a container, which in addition to grasshopper
+also carries all files required to comply with the Nulecule Specification.
 
 
 SEE ALSO
 --------
 
-/usr/share/doc/grasshopper-*/README.md
+/usr/share/doc/grasshopper-*/README.html
+http://www.projectatomic.io/nulecule/spec/0.0.2/index.html
 
 
 
