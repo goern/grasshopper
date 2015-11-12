@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.32
+Version:        0.0.33
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -63,6 +63,11 @@ alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper
 alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
 
 %changelog
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
+- started implementing a guess command (goern@redhat.com)
+- f.ejkd.ejrenf (goern@redhat.com)
+- add a codeclimate config (goern@redhat.com)
+
 * Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.32-1
 - add some manpagegeneration foo but dont use it (goern@redhat.com)
 - add index info (goern@redhat.com)
