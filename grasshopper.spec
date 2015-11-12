@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.32
+Version:        0.0.43
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -14,6 +14,10 @@ BuildRequires:  asciidoc
 BuildRequires:  docbook-style-xsl
 BuildRequires:  libxslt
 Requires:       golang
+Requires(post): %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
+
+%global alternatives_priority 16
 
 %ifarch x86_64
   %global GOARCH amd64
@@ -38,10 +42,8 @@ LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/tools/godep
 LC_ALL=C PATH="$PATH:$GOBIN" go get github.com/goern/grasshopper
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make
 LC_ALL=C PATH="$PATH:$GOBIN" GRASSHOPPER_VERSION=%{version} make doc
-a2x -d manpage -f manpage grasshopper.8.asciidoc
-
-%install
-cp grasshopper $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
+cp grasshopper-%{version} $RPM_BUILD_ROOT/%{_bindir}/grasshopper-%{version}
+mkdir -p %{buildroot}/%{_mandir}/man8/
 cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
 %clean
@@ -49,25 +51,25 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 
 %files
 %defattr(0644,root,root,0755)
-
-%attr(0755,-,-) %{_bindir}/grasshopper-%{version}
+%attr(0755,-,-) %{_bindir}/%{name}-%{version}
 
 %doc AUTHORS LICENSE
 %doc README.html
 %doc %{_mandir}/man8/grasshopper.8*
 
-%post
-alternatives --install %{_bindir}/grasshopper grasshopper %{_bindir}/grasshopper-{version} %{alternatives_priority}
-
-%preun
-alternatives --remove grasshopper %{_bindir}/grasshopper-%{version}
-
 %changelog
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.43-1
+- 
+
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.42-1
+- 
+
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
+- started implementing a guess command (goern@redhat.com)
+
 * Mon Nov 09 2015 Christoph Görn <goern@redhat.com> 0.0.32-1
 - add some manpagegeneration foo but dont use it (goern@redhat.com)
 - add index info (goern@redhat.com)
-- fix the Makefile: always require GRASSHOPPER_VERSION set on a `make` call
-  (goern@redhat.com)
 - disable certificate validation (goern@redhat.com)
 - implement nulecule-library index list (goern@redhat.com)
 
