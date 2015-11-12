@@ -58,12 +58,6 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc %{_mandir}/man8/grasshopper.8*
 
 %changelog
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.43-1
-- 
-
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.42-1
-- 
-
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
 - started implementing a guess command (goern@redhat.com)
 

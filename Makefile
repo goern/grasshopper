@@ -7,7 +7,7 @@ GRASSHOPPER_MIN_VERSION=$(shell date -u +%Y%m%d.%H%M%S)
 .PHONY: all build
 all build: main.go
 	godep restore
-	CGO_ENABLED=0 go build --ldflags '-extldflags "-static" -X main.minversion=$(GRASSHOPPER_MIN_VERSION) -X main.version=$(GRASSHOPPER_VERSION)'
+	CGO_ENABLED=0 go build --ldflags '-extldflags "-static" -X github.com/goern/grasshopper/cmd.minversion=$(GRASSHOPPER_MIN_VERSION) -X github.com/goern/grasshopper/cmd.version=$(GRASSHOPPER_VERSION)'
 
 .PHONY: test
 test:
