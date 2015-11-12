@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.41
+Version:        0.0.42
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -50,8 +50,6 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %files
-%ghost %{_bindir}/%{name}
-
 %defattr(0644,root,root,0755)
 %attr(0755,-,-) %{_bindir}/%{name}-%{version}
 
@@ -59,17 +57,8 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc README.html
 %doc %{_mandir}/man8/grasshopper.8*
 
-%post
-%{_sbindir}/update-alternatives --install %{_bindir}/%{name} \
-  %{name} %{_bindir}/%{name}-%{version} 10
-
-%preun
-if [ $1 -eq 0 ] ; then
-  %{_sbindir}/update-alternatives --remove %{name} %{_bindir}/%{name}-%{version}
-fi
-
 %changelog
-* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.41-1
+* Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.42-1
 - 
 
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.33-1
