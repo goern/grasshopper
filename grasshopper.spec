@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.44
+Version:        0.0.45
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -58,6 +58,9 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc %{_mandir}/man8/grasshopper.8*
 
 %changelog
+* Mon Nov 16 2015 Christoph Görn <goern@redhat.com> 0.0.45-1
+- update deps and remove more on clean (goern@redhat.com)
+- I dont use codeclimate... (goern@redhat.com)
 * Thu Nov 12 2015 Christoph Görn <goern@redhat.com> 0.0.44-1
 - fix Makefile and .spec so that it builds (goern@redhat.com)
 
