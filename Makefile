@@ -25,7 +25,7 @@ doc:
 
 .PHONY: clean
 clean:
-	rm -rf grasshopper
+	rm -rf grasshopper grasshopper.log
 
 .PHONY: clean-image
 clean-image:

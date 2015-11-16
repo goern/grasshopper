@@ -16,6 +16,16 @@
 			"Rev": "71acacd42f85e5e82f70a55327789582a5200a90"
 		},
 		{
+			"ImportPath": "github.com/docker/docker/builder/dockerfile/command",
+			"Comment": "v1.4.1-7035-ge92a735",
+			"Rev": "e92a735d7016ec79d0b0a91c0f003b2de2dabf9f"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/builder/dockerfile/parser",
+			"Comment": "v1.4.1-7035-ge92a735",
+			"Rev": "e92a735d7016ec79d0b0a91c0f003b2de2dabf9f"
+		},
+		{
 			"ImportPath": "github.com/hashicorp/errwrap",
 			"Rev": "7554cd9344cec97297fa6649b055a8c98c2a1e55"
 		},
@@ -44,10 +54,6 @@
 		{
 			"ImportPath": "github.com/mitchellh/mapstructure",
 			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
-		},
-		{
-			"ImportPath": "github.com/op/go-logging",
-			"Rev": "e8d5414f0947014548c2334044a0fac13187dfee"
 		},
 		{
 			"ImportPath": "github.com/russross/blackfriday",
