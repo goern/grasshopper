@@ -24,8 +24,9 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"go/ast"
 	"io/ioutil"
+	"strconv"
+	"strings"
 
 	jww "github.com/spf13/jwalterweatherman"
 
@@ -45,17 +46,65 @@ func GuessFromDockerfile(filename string) (map[string]string, error) {
 	}
 
 	// lets parse the Dockerfile
-	root, err := parser.Parse(bytes.NewReader(dockerfileContent))
+	ast, err := parser.Parse(bytes.NewReader(dockerfileContent))
 
-	fmt.Print(string(root.Dump()))
+	if err != nil {
+		jww.FATAL.Println("Dockerfile parse error")
+	}
 
-	// ast.Walk(VisitorFunc(labelVisitor), root)
+	fmt.Print(ast.Dump())
+
+	cursor := ast
+	var n int
+	for cursor.Next != nil {
+		cursor = cursor.Next
+		jww.DEBUG.Printf("cursor.Value = %s\n", cursor.Value)
+		n++
+	}
+	msgList := make([]string, n)
+	strList := []string{}
+	msg := ""
+	jww.DEBUG.Printf("size of msgList is %d\n", n)
+
+	var i int
+	for ast.Next != nil {
+		ast = ast.Next
+		var str string
+		str = ast.Value
+
+		strList = append(strList, str)
+		msgList[i] = ast.Value
+		i++
+	}
+
+	msg += " " + strings.Join(msgList, " ")
+	fmt.Println(msg)
 
 	return labels, nil
 }
 
-type visitorFunc func(n ast.Node) ast.Visitor
+type Guesses struct {
+	Labels map[string][]string
+}
 
-func labelVisitor(n ast.Node) (w ast.Visitor) {
-	return nil
+func printLabels(node *parser.Node) string {
+	str := ""
+
+	if node.Value == "label" {
+		if node.Next != nil {
+			for n := node.Next; n != nil; n = n.Next {
+				if len(n.Children) > 0 {
+					str += printLabels(n)
+				} else {
+					str += " " + strconv.Quote(n.Value)
+				}
+			}
+		}
+	}
+
+	for _, n := range node.Children {
+		str += printLabels(n) + "\n"
+	}
+
+	return strings.TrimSpace(str)
 }

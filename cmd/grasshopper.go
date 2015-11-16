@@ -83,14 +83,6 @@ var minversion string // set by -X via Makefile
 
 //Execute adds all child commands to the root command GrasshopperCmd and sets flags appropriately.
 func Execute() {
-	if Verbose {
-		jww.SetLogThreshold(jww.LevelTrace)
-		jww.SetStdoutThreshold(jww.LevelInfo)
-	}
-
-	if DoLog {
-		jww.SetLogFile("grasshopper.log")
-	}
 
 	jww.INFO.Printf("The Grasshopper has started at %s\n", time.Now())
 
@@ -153,6 +145,15 @@ func InitializeConfig() {
 	}
 	if grasshopperCmdV.PersistentFlags().Lookup("log").Changed {
 		viper.Set("DoLog", DoLog)
+	}
+
+	if DoLog {
+		jww.SetLogFile("grasshopper.log")
+	}
+
+	if Verbose {
+		jww.SetLogThreshold(jww.LevelTrace)
+		jww.SetStdoutThreshold(jww.LevelTrace)
 	}
 }
 
