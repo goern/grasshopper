@@ -17,6 +17,7 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
+//Package cmd includes all the commands used for the grasshopper command. ;)
 package cmd
 
 import (
