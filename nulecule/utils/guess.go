@@ -25,7 +25,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"strings"
 
 	jww "github.com/spf13/jwalterweatherman"
@@ -36,9 +35,7 @@ import (
 //GuessFromDockerfile will guess some information from a Dockerfile file
 //guessing means to get all the `io.projectatomic.nulecule` labels and return
 //them as a map
-func GuessFromDockerfile(filename string) (map[string]string, error) {
-	labels := make(map[string]string)
-
+func GuessFromDockerfile(filename string) (*Guess, error) {
 	dockerfileContent, err := ioutil.ReadFile(filename)
 
 	if err != nil {
@@ -52,59 +49,54 @@ func GuessFromDockerfile(filename string) (map[string]string, error) {
 		jww.FATAL.Println("Dockerfile parse error")
 	}
 
-	fmt.Print(ast.Dump())
-
-	cursor := ast
-	var n int
-	for cursor.Next != nil {
-		cursor = cursor.Next
-		jww.DEBUG.Printf("cursor.Value = %s\n", cursor.Value)
-		n++
-	}
-	msgList := make([]string, n)
-	strList := []string{}
-	msg := ""
-	jww.DEBUG.Printf("size of msgList is %d\n", n)
-
-	var i int
-	for ast.Next != nil {
-		ast = ast.Next
-		var str string
-		str = ast.Value
-
-		strList = append(strList, str)
-		msgList[i] = ast.Value
-		i++
+	//	fmt.Print(ast.Dump())
+	for _, s := range guessFromLabels(ast) {
+		fmt.Printf("k: %s;\t v: %s\n", s.Key, s.Value)
 	}
 
-	msg += " " + strings.Join(msgList, " ")
-	fmt.Println(msg)
-
-	return labels, nil
+	guesses := new(Guess)
+	return guesses, nil
 }
 
-type Guesses struct {
-	Labels map[string][]string
+//Guess does contain all the things we guessed from a Dockerfile
+type Guess struct {
+	Labels []label
 }
 
-func printLabels(node *parser.Node) string {
-	str := ""
+type label struct {
+	Key   string
+	Value string
+}
 
-	if node.Value == "label" {
-		if node.Next != nil {
-			for n := node.Next; n != nil; n = n.Next {
-				if len(n.Children) > 0 {
-					str += printLabels(n)
+func guessFromLabels(node *parser.Node) []label {
+	var arr []label
+
+	isLabel := (strings.ToUpper(node.Value) == "LABEL")
+
+	for _, n := range node.Children {
+		arr = append(arr, guessFromLabels(n)...)
+	}
+
+	var k, v string
+	step := true // tick, tock
+	if node.Next != nil {
+		for n := node.Next; n != nil; n = n.Next {
+			if len(n.Children) > 0 {
+				arr = append(arr, guessFromLabels(n)...)
+			} else if isLabel {
+				if step {
+					step = false
+					// TODO: think about if you want the Quote parts
+					//k = strconv.Quote(n.Value)
+					k = n.Value
 				} else {
-					str += " " + strconv.Quote(n.Value)
+					step = true
+					//v = strconv.Quote(n.Value)
+					v = n.Value
+					arr = append(arr, label{k, v})
 				}
 			}
 		}
 	}
-
-	for _, n := range node.Children {
-		str += printLabels(n) + "\n"
-	}
-
-	return strings.TrimSpace(str)
+	return arr
 }
