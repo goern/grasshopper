@@ -50,66 +50,14 @@ var IndexCmd = &cobra.Command{
 	Long: `list all Nulecules or the details of one Nulecule on the Nulecule Library
 
 index requires a subcommand, e.g. ` + "`grasshopper index list`.",
-	Run: nil,
+	Run: printIndexList,
 }
 
 var indexListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all applications",
 	Long:  `List all applications in the Nulecule Library Index.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		InitializeConfig()
-
-		if Verbose {
-			jww.SetLogThreshold(jww.LevelTrace)
-			jww.SetStdoutThreshold(jww.LevelInfo)
-		}
-
-		nuleculeLibraryIndexZip, err := getNuleculeLibraryIndexfromGithubAsZIP()
-		if err != nil {
-			jww.FATAL.Println(err)
-			return
-		}
-
-		w := new(tabwriter.Writer)
-		w.Init(os.Stdout, 26, 8, 2, '\t', 0)
-
-		fmt.Fprintln(w, "This is the Nulecule Library Index")
-		fmt.Fprintln(w, "Application Name\tAppID\tVersion")
-
-		// Iterate through the files in the archive
-		for _, item := range nuleculeLibraryIndexZip.File {
-			if item.FileInfo().IsDir() {
-				continue
-			}
-
-			// if the file is a Nulecule, getit!
-			if item.FileInfo().Name() == "Nulecule" {
-				jww.DEBUG.Printf("Found a Nulecule, size of it's description is %d\n", item.FileInfo().Size())
-
-				rc, err := item.Open()
-				if err != nil {
-					jww.FATAL.Println(err)
-					return
-				}
-				defer rc.Close()
-
-				// get the Nulecules content
-				nuci, parseError := nulecule.Parse(rc)
-
-				if parseError != nil {
-					jww.INFO.Println(parseError, " This may be due to unsupported (by Grasshopper) artifact inheritance.")
-					continue
-				}
-
-				fmt.Fprintf(w, "%s\t%s\t%s\n", nuci.Metadata.Name, nuci.AppID, nuci.Metadata.AppVersion)
-			}
-
-			w.Flush()
-
-		}
-
-	},
+	Run:   printIndexList,
 }
 
 var indexInfoCmd = &cobra.Command{
@@ -200,4 +148,56 @@ func getNuleculeLibraryIndexfromGithubAsZIP() (*zip.Reader, error) {
 
 	r := bytes.NewReader(b)
 	return zip.NewReader(r, int64(r.Len()))
+}
+
+func printIndexList(cmd *cobra.Command, args []string) {
+	InitializeConfig()
+
+	if Verbose {
+		jww.SetLogThreshold(jww.LevelTrace)
+		jww.SetStdoutThreshold(jww.LevelInfo)
+	}
+
+	nuleculeLibraryIndexZip, err := getNuleculeLibraryIndexfromGithubAsZIP()
+	if err != nil {
+		jww.FATAL.Println(err)
+		return
+	}
+
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 26, 8, 2, '\t', 0)
+
+	fmt.Fprintln(w, "This is the Nulecule Library Index")
+	fmt.Fprintln(w, "Application Name\tAppID\tVersion")
+
+	// Iterate through the files in the archive
+	for _, item := range nuleculeLibraryIndexZip.File {
+		if item.FileInfo().IsDir() {
+			continue
+		}
+
+		// if the file is a Nulecule, getit!
+		if item.FileInfo().Name() == "Nulecule" {
+			jww.DEBUG.Printf("Found a Nulecule, size of it's description is %d\n", item.FileInfo().Size())
+
+			rc, err := item.Open()
+			if err != nil {
+				jww.FATAL.Println(err)
+				return
+			}
+			defer rc.Close()
+
+			// get the Nulecules content
+			nuci, parseError := nulecule.Parse(rc)
+
+			if parseError != nil {
+				jww.INFO.Println(parseError, " This may be due to unsupported (by Grasshopper) artifact inheritance.")
+				continue
+			}
+
+			fmt.Fprintf(w, "%s\t%s\t%s\n", nuci.Metadata.Name, nuci.AppID, nuci.Metadata.AppVersion)
+		}
+
+		w.Flush()
+	}
 }
