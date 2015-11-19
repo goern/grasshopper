@@ -20,7 +20,8 @@ LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database m
 #  * $POSTGRESQL_DATABASE - Name of the database to create
 #  * $POSTGRESQL_ADMIN_PASSWORD (Optional) - Password for the 'postgres'
 #                           PostgreSQL administrative account
-LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data"
+LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data" \
+      io.projectatomic.nulecule.volume.logs="/var/log/psql/"
 LABEL io.projectatomic.nulecule.environment.required="POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE"
 LABEL io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD, LAME_NAME"
 

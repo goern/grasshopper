@@ -25,7 +25,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strconv"
 	"strings"
 	"text/template"
@@ -38,8 +37,7 @@ import (
 )
 
 //NuleculePersistentVolumeTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject snippet
-const NuleculePersistentVolumeTemplate = `---
-- persistentVolume:
+const NuleculePersistentVolumeTemplate = `  - persistentVolume:
     name: "{{.Name}}"
     accessMode: "ReadWrite"
 {{if gt .Size 0}}    size: {{.Size}}{{else}}    size: 4 # GB by default{{end}}
@@ -51,14 +49,27 @@ type NuleculePersistentVolume struct {
 	Size int
 }
 
+//NuleculeMetadataTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject snippet
+const NuleculeMetadataTemplate = `metadata:
+  name: "{{.Name}}"
+{{ if .Version }}  appversion: "{{.Version}}"{{ end }}
+{{ if .Description }}  description: "{{.Description}}"{{ end }}
+` // FIXME add a license object to the template
+
+//NuleculeMetadata is the specification for a http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject
+type NuleculeMetadata struct {
+	Name, Version, Description, License string
+}
+
 //GuessFromDockerfile will guess some information from a Dockerfile file
-//guessing means to get all the `io.projectatomic.nulecule` labels and return
-//them as a map
-func GuessFromDockerfile(filename string) (Guess, error) {
+//guessing means to get all the LABELs and return them as a map maybe
+//output something that could be concluded from the LABELs
+func GuessFromDockerfile(filename string) (map[string]string, error) {
 	dockerfileContent, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		jww.ERROR.Println("failed to read the Dockerfile")
+		return nil, err
 	}
 
 	// lets parse the Dockerfile
@@ -66,24 +77,29 @@ func GuessFromDockerfile(filename string) (Guess, error) {
 
 	if err != nil {
 		jww.FATAL.Println("Dockerfile parse error")
+		return nil, err
 	}
 
-	for _, s := range guessFromLabels(ast) {
-		jww.DEBUG.Printf("k: %s;\t v: %s\n", s.Key, s.Value)
+	// and get all LABELs from it
+	var l = guessFromLabels(ast)
+
+	var result map[string]string
+	result = make(map[string]string)
+
+	for _, s := range l {
+		result[strings.Replace(s.Key, "\"", "", -1)] = strings.Replace(s.Value, "\"", "", -1)
 	}
 
+	for key, value := range result {
+		jww.DEBUG.Printf("result: k: %s;\t v: %s\n", key, value)
+	}
+
+	// if --experimental is true, we print all snippets to STDOUT
 	if viper.GetBool("Experimental") {
-		snippetsFromLabels(ast)
+		snippetsFromLabelsMap(result)
 	}
 
-	var guesses Guess
-	guesses.Labels = guessFromLabels(ast)
-	return guesses, err
-}
-
-//Guess does contain all the things we guessed from a Dockerfile
-type Guess struct {
-	Labels []Label
+	return result, err
 }
 
 //Label is a generic structure holding LABELs (of Dockerfiles)
@@ -147,10 +163,82 @@ func generateNuleculePersistentVolume(spec NuleculePersistentVolume) string {
 
 	err := t.Execute(&buffer, spec)
 	if err != nil {
-		log.Println("executing template:", err)
+		jww.ERROR.Println("generating Nulecule PersistentVolume snippet:", err)
 	}
 
 	return buffer.String()
+}
+
+func generateNuleculeMetadata(spec NuleculeMetadata) string {
+	var buffer bytes.Buffer
+
+	// Create a new template and parse the NuleculePersistentVolumeTemplate into it.
+	t := template.Must(template.New("Metadata").Parse(NuleculeMetadataTemplate))
+
+	err := t.Execute(&buffer, spec)
+	if err != nil {
+		jww.ERROR.Println("generating Nulecule Metadata snippet:", err)
+	}
+
+	return buffer.String()
+}
+
+//InLabels will test it a label is in a LABELs map (derived from Dockerfile)
+func InLabels(label string, labels map[string]string) bool {
+	for key := range labels {
+		if strings.ToUpper(key) == strings.ToUpper(label) {
+			return true
+		}
+	}
+
+	return false
+}
+
+//GetNuleculeVolumesFromLabels will return a map of Nulecule volumes found
+// within the Dockerfile
+func GetNuleculeVolumesFromLabels(labels map[string]string) map[string]string {
+	result := make(map[string]string)
+
+	for key, value := range labels {
+		parts := strings.Split(strings.ToUpper(key), ".")
+		if strings.Join(parts[0:len(parts)-1], ".") == strings.ToUpper("io.projectatomic.nulecule.volume") {
+			jww.DEBUG.Printf("got a Volume: %s, path should be %s\n", parts[len(parts)-1], value)
+
+			result[parts[len(parts)-1]] = value
+		}
+	}
+
+	return result
+}
+
+func snippetsFromLabelsMap(labels map[string]string) {
+	fmt.Print(`---
+specversion: 0.0.2
+id: `)
+	fmt.Println(generateNuleculeID(labels["io.k8s.display-name"]))
+
+	// gathers some data to start with
+	if InLabels("io.k8s.description", labels) && InLabels("io.k8s.display-name", labels) {
+		versionString := labels["Version"] + "-" + labels["Release"]
+
+		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde Metadata snippet")
+		fmt.Print(generateNuleculeMetadata(NuleculeMetadata{labels["io.k8s.display-name"], versionString, labels["io.k8s.description"], ""}))
+	}
+
+	// ok, lets see if we need to generate some requiremets for http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
+	volumes := GetNuleculeVolumesFromLabels(labels)
+
+	// ja, looks like we need to...
+	if len(volumes) > 0 {
+		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde PersistentVolume snippet")
+		fmt.Println("requirements:")
+		fmt.Print(generateNuleculePersistentVolume(NuleculePersistentVolume{strings.Replace(labels["io.projectatomic.nulecule.volume.data"], "\"", "", -1), 1}))
+	}
+
+}
+
+func generateNuleculeID(in string) string {
+	return strings.Replace(in, " ", "_", -1)
 }
 
 func snippetsFromLabels(node *parser.Node) {
@@ -167,16 +255,15 @@ func snippetsFromLabels(node *parser.Node) {
 			} else if isLabel {
 				switch strings.ToLower(n.Value) {
 				case "io.k8s.description":
-					fmt.Printf("this is a io.k8s.description LABEL, content: %s\n", n.Next.Value)
+
 				case "io.k8s.display-name":
-					fmt.Printf("this is a io.k8s.display-name LABEL, content: %s\n", n.Next.Value)
+
 				case "io.projectatomic.nulecule.volume.data":
-					fmt.Printf("found a io.projectatomic.nulecule.volume.data LABEL and will genrate a storage claim\n%s\n",
-						generateNuleculePersistentVolume(NuleculePersistentVolume{strings.Replace(n.Next.Value, "\"", "", -1), 1})) // TODO doc that this is GiB
+					fmt.Println(generateNuleculePersistentVolume(NuleculePersistentVolume{strings.Replace(n.Next.Value, "\"", "", -1), 1})) // TODO doc that this is GiB
 				case "io.projectatomic.nulecule.environment.required":
-					fmt.Printf("this is a io.projectatomic.nulecule.environment.required LABEL, content: %#v\n", stringToArrayOfStrings(n.Next.Value))
+
 				case "io.projectatomic.nulecule.environment.optional":
-					fmt.Printf("this is a io.projectatomic.nulecule.environment.optional LABEL, content: %#v\n", stringToArrayOfStrings(n.Next.Value))
+
 				}
 
 			}

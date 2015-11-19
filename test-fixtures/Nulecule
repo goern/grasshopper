@@ -16,3 +16,8 @@ graph:
     artifacts:
       openshift:
         - file://artifacts/openshift/mlbparks-template.yaml
+requirements:
+  - persistentVolume:
+    name: "var-lib-psql-data"
+    accessMode: "ReadWrite"
+    size: 1

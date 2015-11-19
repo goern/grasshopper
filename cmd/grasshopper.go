@@ -46,6 +46,12 @@ under certain conditions; use 'grasshopper show license' for details.`)
 	},
 }
 
+//NuleculeCmd is Grasshopper's Nulecule sub-command.
+var NuleculeCmd = &cobra.Command{
+	Use:   "nulecule",
+	Short: "do the nulecule",
+	Long:  `Work with a Nulecule.`,
+}
 var grasshopperCmdV *cobra.Command
 
 //versionCmd will simply print the version string of Grasshopper
@@ -96,16 +102,17 @@ func Execute() {
 
 	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 
-	GrasshopperCmd.AddCommand(IndexCmd)
+	// add nulecule and it's sub-commands
+	NuleculeCmd.AddCommand(IndexCmd)
+	NuleculeCmd.AddCommand(GuessCmd)
+	GrasshopperCmd.AddCommand(NuleculeCmd)
 
-	GrasshopperCmd.AddCommand(FetchCmd)
-	GrasshopperCmd.AddCommand(InstallCmd)
-	GrasshopperCmd.AddCommand(RunCmd)
-	GrasshopperCmd.AddCommand(StopCmd)
-	GrasshopperCmd.AddCommand(UninstallCmd)
-	GrasshopperCmd.AddCommand(CleanCmd)
-
-	GrasshopperCmd.AddCommand(GuessCmd)
+	// GrasshopperCmd.AddCommand(FetchCmd)
+	// GrasshopperCmd.AddCommand(InstallCmd)
+	// GrasshopperCmd.AddCommand(RunCmd)
+	// GrasshopperCmd.AddCommand(StopCmd)
+	// GrasshopperCmd.AddCommand(UninstallCmd)
+	// GrasshopperCmd.AddCommand(CleanCmd)
 
 	/* FIxME this is nice, but we need a better one!
 	manHeader := &cobra.GenManHeader{
