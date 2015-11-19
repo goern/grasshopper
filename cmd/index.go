@@ -49,7 +49,7 @@ var IndexCmd = &cobra.Command{
 	Short: "list index of applications or get info on one application",
 	Long: `list all Nulecules or the details of one Nulecule on the Nulecule Library
 
-index requires a subcommand, e.g. ` + "`grasshopper index list`.",
+index requires a subcommand, e.g. ` + "`grasshopper nulecule index list`.",
 	Run: printIndexList,
 }
 
