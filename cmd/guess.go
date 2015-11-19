@@ -43,11 +43,10 @@ var GuessCmd = &cobra.Command{
 		// if we got a Dockerfile
 		jww.INFO.Println("guessing from " + string(args[0]))
 
-		guess, err := utils.GuessFromDockerfile(args[0])
+		_, err := utils.GuessFromDockerfile(args[0])
 		if err != nil {
 			jww.FATAL.Println("failed to read the Dockerfile, nothing guessed")
 		}
 
-		jww.DEBUG.Println(guess)
 	},
 }

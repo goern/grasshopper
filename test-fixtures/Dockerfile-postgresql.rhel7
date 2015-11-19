@@ -22,7 +22,7 @@ LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database m
 #                           PostgreSQL administrative account
 LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data"
 LABEL io.projectatomic.nulecule.environment.required="POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE"
-LABEL io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD"
+LABEL io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD, LAME_NAME"
 
 # Labels consumed by Red Hat build service
 LABEL Component="rh-postgresql94" \

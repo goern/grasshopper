@@ -1,10 +1,14 @@
 ---
 specversion: 0.0.2
-id: test-atomicapp
+id: test-fixture
 
 metadata:
-  name: Test
-  appversion: 1.1.0
+  name: A Nulecule test fixture
+  appversion: 1.0.0
+  description: This file is for testing Nulecule parameter constraints
+  license:
+    name: LGPL3
+    URL: http://gnu.org/
 graph:
   - name: graphelement1
     params:

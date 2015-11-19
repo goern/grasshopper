@@ -1,0 +1,19 @@
+---
+specversion: 0.0.2
+id: test-fixture
+
+metadata:
+  name: A Nulecule test fixture
+  appversion: 1.0.0
+  description: This file is for testing Nulecule artifact inheritance
+  license:
+    name: LGPL3
+    URL: http://gnu.org/
+graph:
+  - name: graphelement1
+    artifacts:
+      kubernetes:
+        - file://artifacts/openshift/mlbparks-template.yaml
+      openshift:
+        - inherits:
+          - kubernetes

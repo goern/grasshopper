@@ -19,5 +19,21 @@ func TestParseFile(t *testing.T) {
 
 	assert.NotNil(containerApplication)
 
+	containerApplication, parseError = ParseFile("../test-fixtures/with-inherits")
+
+	if parseError != nil {
+		t.Log(parseError)
+	}
+
+	assert.NotNil(containerApplication)
+
+	containerApplication, parseError = ParseFile("../test-fixtures/with-constraints")
+
+	if parseError != nil {
+		t.Log(parseError)
+	}
+
+	assert.NotNil(containerApplication)
+
 	//	t.Log(string(containerApplication))
 }
