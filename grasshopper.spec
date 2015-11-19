@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.45
+Version:        0.0.46
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -58,6 +58,11 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc %{_mandir}/man8/grasshopper.8*
 
 %changelog
+* Thu Nov 19 2015 Christoph Görn <goern@redhat.com> 0.0.46-1
+- add some more Nulecule guessing from Dockerfile (goern@redhat.com)
+- add --experimental flag (goern@redhat.com)
+- added package comment (goern@redhat.com)
+
 * Mon Nov 16 2015 Christoph Görn <goern@redhat.com> 0.0.45-1
 - update deps and remove more on clean (goern@redhat.com)
 - I dont use codeclimate... (goern@redhat.com)
