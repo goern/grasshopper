@@ -78,6 +78,9 @@ var DryRun bool
 //DoLog will write to a temporary logfile
 var DoLog bool
 
+//Experimental will enable experimental output
+var Experimental bool
+
 var version string    // set by -X via Makefile
 var minversion string // set by -X via Makefile
 
@@ -138,6 +141,7 @@ func InitializeConfig() {
 	viper.SetDefault("Verbose", false)
 	viper.SetDefault("DryRun", false)
 	viper.SetDefault("DoLog", true)
+	viper.SetDefault("Experimental", true)
 
 	// bind config to command flags
 	if grasshopperCmdV.PersistentFlags().Lookup("verbose").Changed {
@@ -145,6 +149,9 @@ func InitializeConfig() {
 	}
 	if grasshopperCmdV.PersistentFlags().Lookup("log").Changed {
 		viper.Set("DoLog", DoLog)
+	}
+	if grasshopperCmdV.PersistentFlags().Lookup("experimental").Changed {
+		viper.Set("Experimental", Experimental)
 	}
 
 	if DoLog {
@@ -161,6 +168,7 @@ func InitializeConfig() {
 func init() {
 	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	GrasshopperCmd.PersistentFlags().BoolVarP(&DoLog, "log", "l", true, "write logging output to file")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Experimental, "experimental", "x", true, "write experimental output to stdout")
 
 	grasshopperCmdV = GrasshopperCmd
 
