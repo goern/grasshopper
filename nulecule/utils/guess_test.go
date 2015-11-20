@@ -12,21 +12,21 @@ func TestGenerateNuleculePersistentVolume(t *testing.T) {
 	assert := assert.New(t)
 
 	// This is for 1GiB
-	const expectedPersistenVolume1GiB = `- persistentVolume:
+	const expectedPersistenVolume1GiB = `  - persistentVolume:
     name: "var-lib-psql-data"
     accessMode: "ReadWrite"
     size: 1
 `
 
 	// This is a default config, using 4GiB
-	const expectedPersistenVolume4GiBDefault = `- persistentVolume:
+	const expectedPersistenVolume4GiBDefault = `  - persistentVolume:
     name: "var-lib-psql-data"
     accessMode: "ReadWrite"
     size: 4 # GB by default
 `
 
 	// This is a claim for 4GiB
-	const expectedPersistenVolume4GiB = `- persistentVolume:
+	const expectedPersistenVolume4GiB = `  - persistentVolume:
     name: "var-lib-psql-data"
     accessMode: "ReadWrite"
     size: 4
