@@ -13,33 +13,66 @@ func TestGenerateNuleculePersistentVolume(t *testing.T) {
 
 	// This is for 1GiB
 	const expectedPersistenVolume1GiB = `  - persistentVolume:
-    name: "var-lib-psql-data"
+    name: "data"
     accessMode: "ReadWrite"
-    size: 1
+    size: "1Gi"
 `
 
 	// This is a default config, using 4GiB
 	const expectedPersistenVolume4GiBDefault = `  - persistentVolume:
-    name: "var-lib-psql-data"
+    name: "data"
     accessMode: "ReadWrite"
-    size: 4 # GB by default
+    size: "4Gi" # GB by default
 `
 
 	// This is a claim for 4GiB
 	const expectedPersistenVolume4GiB = `  - persistentVolume:
-    name: "var-lib-psql-data"
+    name: "data"
     accessMode: "ReadWrite"
-    size: 4
+    size: "4Gi"
 `
 
-	assert.Equal(expectedPersistenVolume1GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 1}))
+	// This has a dash
+	const expectedPersistenVolume2GiB = `  - persistentVolume:
+    name: "data-2"
+    accessMode: "ReadWrite"
+    size: "2Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", -1}))
+	// This has two dashes
+	const expectedPersistenVolume3GiB = `  - persistentVolume:
+    name: "3-data-3"
+    accessMode: "ReadWrite"
+    size: "3Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 0}))
+	// This has a slashes
+	const expectedPersistenVolume5GiB = `  - persistentVolume:
+    name: "name"
+    accessMode: "ReadWrite"
+    size: "5Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 4}))
+	// This has two slashes
+	const expectedPersistenVolume6GiB = `  - persistentVolume:
+    name: "org_name"
+    accessMode: "ReadWrite"
+    size: "6Gi"
+`
 
+	assert.Equal(expectedPersistenVolume1GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", "1Gi"}))
+
+	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", ""}))
+
+	assert.Equal(expectedPersistenVolume4GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", "4Gi"}))
+
+	assert.Equal(expectedPersistenVolume2GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data-2", "2Gi"}))
+
+	assert.Equal(expectedPersistenVolume3GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"3-data-3", "3Gi"}))
+
+	assert.Equal(expectedPersistenVolume5GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"name", "5Gi"}))
+
+	assert.Equal(expectedPersistenVolume6GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"org_name", "6Gi"}))
 }
 
 func TestInLabels(t *testing.T) {
@@ -68,9 +101,8 @@ func TestGetNuleculeVolumesFromLabels(t *testing.T) {
 		"io.k8s.display-name":                            "dont want it",
 	}
 
-	correctAnswer := map[string]string{
-		"DATA": "want that one too",
-		"LOGS": "want this it",
+	correctAnswer := []NuleculePersistentVolume{
+		NuleculePersistentVolume{Name: "data", Size: "4Gi"}, NuleculePersistentVolume{Name: "logs", Size: "4Gi"},
 	}
 
 	assert.Equal(correctAnswer, GetNuleculeVolumesFromLabels(labels))

@@ -40,13 +40,13 @@ import (
 const NuleculePersistentVolumeTemplate = `  - persistentVolume:
     name: "{{.Name}}"
     accessMode: "ReadWrite"
-{{if gt .Size 0}}    size: {{.Size}}{{else}}    size: 4 # GB by default{{end}}
+{{if .Size }}    size: "{{.Size}}"{{else}}    size: "4Gi" # GB by default{{end}}
 `
 
 //NuleculePersistentVolume is the specification for a http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
 type NuleculePersistentVolume struct {
 	Name string
-	Size int
+	Size string
 }
 
 //NuleculeMetadataTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject snippet
@@ -159,7 +159,7 @@ func generateNuleculePersistentVolume(spec NuleculePersistentVolume) string {
 	// Create a new template and parse the NuleculePersistentVolumeTemplate into it.
 	t := template.Must(template.New("PersistentVolume").Parse(NuleculePersistentVolumeTemplate))
 
-	spec.Name = strings.Replace(strings.Replace(spec.Name, "/", "-", -1), "-", "", 1) // there shall be no / in a name
+	spec.Name = strings.Replace(spec.Name, "/", "-", -1) // there shall be no / in a name
 
 	err := t.Execute(&buffer, spec)
 	if err != nil {
@@ -195,16 +195,24 @@ func InLabels(label string, labels map[string]string) bool {
 }
 
 //GetNuleculeVolumesFromLabels will return a map of Nulecule volumes found
-// within the Dockerfile
-func GetNuleculeVolumesFromLabels(labels map[string]string) map[string]string {
-	result := make(map[string]string)
+// within the Dockerfile. This will return a map[string]string containing
+// Name -> Path, Size
+// all strings are converted to lower case letters
+func GetNuleculeVolumesFromLabels(labels map[string]string) []NuleculePersistentVolume {
+	var result []NuleculePersistentVolume
 
 	for key, value := range labels {
-		parts := strings.Split(strings.ToUpper(key), ".")
-		if strings.Join(parts[0:len(parts)-1], ".") == strings.ToUpper("io.projectatomic.nulecule.volume") {
+		parts := strings.Split(strings.ToLower(key), ".")
+		if strings.Join(parts[0:len(parts)-1], ".") == strings.ToLower("io.projectatomic.nulecule.volume") {
 			jww.DEBUG.Printf("got a Volume: %s, path should be %s\n", parts[len(parts)-1], value)
 
-			result[parts[len(parts)-1]] = value
+			splitted := strings.Split(value, ",") // the will split path and size
+
+			if len(splitted) < 2 {
+				result = append(result, NuleculePersistentVolume{parts[len(parts)-1], "4Gi"})
+			} else {
+				result = append(result, NuleculePersistentVolume{parts[len(parts)-1], SpaceMap(splitted[1])})
+			}
 		}
 	}
 
@@ -231,42 +239,16 @@ id: `)
 	// ja, looks like we need to...
 	if len(volumes) > 0 {
 		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde PersistentVolume snippet")
-		fmt.Println("requirements:")
-		fmt.Print(generateNuleculePersistentVolume(NuleculePersistentVolume{strings.Replace(labels["io.projectatomic.nulecule.volume.data"], "\"", "", -1), 1}))
+		fmt.Println("requirements:") // FIXME
+
+		for _, volume := range volumes {
+			jww.DEBUG.Printf("%#v\n", volume)
+			fmt.Print(generateNuleculePersistentVolume(volume))
+		}
 	}
 
 }
 
 func generateNuleculeID(in string) string {
 	return strings.Replace(in, " ", "_", -1)
-}
-
-func snippetsFromLabels(node *parser.Node) {
-	isLabel := (strings.ToUpper(node.Value) == "LABEL")
-
-	for _, n := range node.Children {
-		snippetsFromLabels(n)
-	}
-
-	if node.Next != nil {
-		for n := node.Next; n != nil; n = n.Next {
-			if len(n.Children) > 0 {
-				snippetsFromLabels(n)
-			} else if isLabel {
-				switch strings.ToLower(n.Value) {
-				case "io.k8s.description":
-
-				case "io.k8s.display-name":
-
-				case "io.projectatomic.nulecule.volume.data":
-					fmt.Println(generateNuleculePersistentVolume(NuleculePersistentVolume{strings.Replace(n.Next.Value, "\"", "", -1), 1})) // TODO doc that this is GiB
-				case "io.projectatomic.nulecule.environment.required":
-
-				case "io.projectatomic.nulecule.environment.optional":
-
-				}
-
-			}
-		}
-	}
 }

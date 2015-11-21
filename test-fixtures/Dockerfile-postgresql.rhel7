@@ -62,8 +62,8 @@ ENV BASH_ENV=/var/lib/pgsql/scl_enable \
 # Volumes:
 #  * /var/lib/psql/data   - Database cluster for PostgreSQL
 #  * /var/log/postgresql  - logfile location for PostgreSQL
-LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data" \
-      io.projectatomic.nulecule.volume.logs="/var/log/postgresql"
+LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data,1Gi" \
+      io.projectatomic.nulecule.volume.logs="/var/log/postgresql, 512Mi"
 VOLUME ["/var/lib/pgsql/data", "/var/log/postgresql"]
 
 USER 26
