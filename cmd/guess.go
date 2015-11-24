@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/goern/grasshopper/nulecule/utils"
 	"github.com/spf13/cobra"
 	jww "github.com/spf13/jwalterweatherman"
@@ -43,9 +45,16 @@ var GuessCmd = &cobra.Command{
 		// if we got a Dockerfile
 		jww.INFO.Println("guessing from " + string(args[0]))
 
-		_, err := utils.GuessFromDockerfile(args[0])
+		// lets parse it and guess some Nulecule file from it
+		_, nuleculeFile, err := utils.GuessFromDockerfile(args[0])
 		if err != nil {
 			jww.FATAL.Println("failed to read the Dockerfile, nothing guessed")
+			return
+		}
+
+		// it was good guessing that Nulecule? Print it!
+		if nuleculeFile != "" {
+			fmt.Println(nuleculeFile)
 		}
 
 	},

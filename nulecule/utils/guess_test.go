@@ -5,6 +5,10 @@ package utils
 import (
 	"testing"
 
+	"gopkg.in/yaml.v2"
+
+	"github.com/goern/grasshopper/nulecule"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -106,4 +110,28 @@ func TestGetNuleculeVolumesFromLabels(t *testing.T) {
 	}
 
 	assert.Equal(correctAnswer, GetNuleculeVolumesFromLabels(labels))
+}
+
+func TestGuessFromDockerfile(t *testing.T) {
+	assert := assert.New(t)
+
+	viper.Set("Experimental", true) // simulate --experimental command line flag
+
+	_, nuleculeStruct, err := GuessFromDockerfile("../../test-fixtures/Dockerfile-postgresql.rhel7")
+	// test if it did guess without any error
+	assert.Nil(err)
+	assert.NotNil(nuleculeStruct)
+
+	// lets see if we got all the content we want
+	assert.Contains(nuleculeStruct, "specversion: 0.0.2")
+	assert.Contains(nuleculeStruct, "  appversion: \"9.4-1\"")
+	assert.Contains(nuleculeStruct, "    name: \"data\"")
+	assert.Contains(nuleculeStruct, "    size: \"1Gi\"")
+	assert.Contains(nuleculeStruct, "    name: \"logs\"")
+	assert.Contains(nuleculeStruct, "    size: \"512Mi\"")
+
+	// and parse the yaml, just to be sure
+	app := nulecule.ContainerApplication{}
+	unmarschalError := yaml.Unmarshal([]byte(nuleculeStruct), &app)
+	assert.NotNil(unmarschalError)
 }

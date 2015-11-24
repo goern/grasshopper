@@ -62,14 +62,13 @@ type NuleculeMetadata struct {
 }
 
 //GuessFromDockerfile will guess some information from a Dockerfile file
-//guessing means to get all the LABELs and return them as a map maybe
-//output something that could be concluded from the LABELs
-func GuessFromDockerfile(filename string) (map[string]string, error) {
+//guessing means to get all the LABELs and process them somehow
+func GuessFromDockerfile(filename string) (map[string]string, string, error) {
 	dockerfileContent, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		jww.ERROR.Println("failed to read the Dockerfile")
-		return nil, err
+		return nil, "", err
 	}
 
 	// lets parse the Dockerfile
@@ -77,29 +76,27 @@ func GuessFromDockerfile(filename string) (map[string]string, error) {
 
 	if err != nil {
 		jww.FATAL.Println("Dockerfile parse error")
-		return nil, err
+		return nil, "", err
 	}
-
-	// and get all LABELs from it
-	var l = guessFromLabels(ast)
 
 	var result map[string]string
 	result = make(map[string]string)
 
-	for _, s := range l {
+	for _, s := range guessFromLabels(ast) {
 		result[strings.Replace(s.Key, "\"", "", -1)] = strings.Replace(s.Value, "\"", "", -1)
 	}
 
 	for key, value := range result {
-		jww.DEBUG.Printf("result: k: %s;\t v: %s\n", key, value)
+		jww.DEBUG.Printf("result: LABEL: %s;\t VALUE: %s\n", key, value)
 	}
 
 	// if --experimental is true, we print all snippets to STDOUT
+	resultingNulecule := ""
 	if viper.GetBool("Experimental") {
-		snippetsFromLabelsMap(result)
+		resultingNulecule = snippetsFromLabelsMap(result)
 	}
 
-	return result, err
+	return result, resultingNulecule, err
 }
 
 //Label is a generic structure holding LABELs (of Dockerfiles)
@@ -149,10 +146,6 @@ func SpaceMap(str string) string {
 	}, str)
 }
 
-func stringToArrayOfStrings(str string) []string {
-	return strings.Split(SpaceMap(strings.Replace(str, "\"", "", -1)), ",")
-}
-
 func generateNuleculePersistentVolume(spec NuleculePersistentVolume) string {
 	var buffer bytes.Buffer
 
@@ -164,6 +157,7 @@ func generateNuleculePersistentVolume(spec NuleculePersistentVolume) string {
 	err := t.Execute(&buffer, spec)
 	if err != nil {
 		jww.ERROR.Println("generating Nulecule PersistentVolume snippet:", err)
+		return ""
 	}
 
 	return buffer.String()
@@ -178,6 +172,7 @@ func generateNuleculeMetadata(spec NuleculeMetadata) string {
 	err := t.Execute(&buffer, spec)
 	if err != nil {
 		jww.ERROR.Println("generating Nulecule Metadata snippet:", err)
+		return ""
 	}
 
 	return buffer.String()
@@ -219,18 +214,26 @@ func GetNuleculeVolumesFromLabels(labels map[string]string) []NuleculePersistent
 	return result
 }
 
-func snippetsFromLabelsMap(labels map[string]string) {
-	fmt.Print(`---
+func snippetsFromLabelsMap(labels map[string]string) string {
+	var buffer bytes.Buffer
+
+	fmt.Fprint(&buffer, `---
 specversion: 0.0.2
 id: `)
-	fmt.Println(generateNuleculeID(labels["io.k8s.display-name"]))
+	fmt.Fprint(&buffer, generateNuleculeID(labels["io.k8s.display-name"]))
 
 	// gathers some data to start with
 	if InLabels("io.k8s.description", labels) && InLabels("io.k8s.display-name", labels) {
-		versionString := labels["Version"] + "-" + labels["Release"]
+		versionString := ""
+
+		if labels["Release"] != "" {
+			versionString = labels["Version"] + "-" + labels["Release"]
+		} else {
+			versionString = labels["Version"]
+		}
 
 		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde Metadata snippet")
-		fmt.Print(generateNuleculeMetadata(NuleculeMetadata{labels["io.k8s.display-name"], versionString, labels["io.k8s.description"], ""}))
+		fmt.Fprint(&buffer, generateNuleculeMetadata(NuleculeMetadata{labels["io.k8s.display-name"], versionString, labels["io.k8s.description"], ""}))
 	}
 
 	// ok, lets see if we need to generate some requiremets for http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
@@ -238,15 +241,15 @@ id: `)
 
 	// ja, looks like we need to...
 	if len(volumes) > 0 {
-		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde PersistentVolume snippet")
-		fmt.Println("requirements:") // FIXME
+		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde Requirements snippet")
+		fmt.Fprint(&buffer, "requirements:\n")
 
 		for _, volume := range volumes {
-			jww.DEBUG.Printf("%#v\n", volume)
-			fmt.Print(generateNuleculePersistentVolume(volume))
+			fmt.Fprint(&buffer, generateNuleculePersistentVolume(volume))
 		}
 	}
 
+	return buffer.String()
 }
 
 func generateNuleculeID(in string) string {

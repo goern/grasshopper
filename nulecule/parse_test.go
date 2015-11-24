@@ -15,6 +15,7 @@ func TestParseFile(t *testing.T) {
 
 	if parseError != nil {
 		t.Log(parseError)
+		// FIXME this should panic!
 	}
 
 	assert.NotNil(containerApplication)
@@ -23,6 +24,8 @@ func TestParseFile(t *testing.T) {
 
 	if parseError != nil {
 		t.Log(parseError)
+		// FIXME this should panic!
+
 	}
 
 	assert.NotNil(containerApplication)
@@ -31,6 +34,8 @@ func TestParseFile(t *testing.T) {
 
 	if parseError != nil {
 		t.Log(parseError)
+		// FIXME this should panic!
+
 	}
 
 	assert.NotNil(containerApplication)
