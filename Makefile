@@ -32,3 +32,7 @@ clean:
 .PHONY: clean-image
 clean-image:
 	docker rmi goern/grasshopper:$(GRASSHOPPER_VERSION)
+
+.PHONY: tags
+tags:
+	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .

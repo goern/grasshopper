@@ -5,6 +5,10 @@ package utils
 import (
 	"testing"
 
+	"gopkg.in/yaml.v2"
+
+	"github.com/goern/grasshopper/nulecule"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,34 +16,67 @@ func TestGenerateNuleculePersistentVolume(t *testing.T) {
 	assert := assert.New(t)
 
 	// This is for 1GiB
-	const expectedPersistenVolume1GiB = `- persistentVolume:
-    name: "var-lib-psql-data"
+	const expectedPersistenVolume1GiB = `  - persistentVolume:
+    name: "data"
     accessMode: "ReadWrite"
-    size: 1
+    size: "1Gi"
 `
 
 	// This is a default config, using 4GiB
-	const expectedPersistenVolume4GiBDefault = `- persistentVolume:
-    name: "var-lib-psql-data"
+	const expectedPersistenVolume4GiBDefault = `  - persistentVolume:
+    name: "data"
     accessMode: "ReadWrite"
-    size: 4 # GB by default
+    size: "4Gi" # GB by default
 `
 
 	// This is a claim for 4GiB
-	const expectedPersistenVolume4GiB = `- persistentVolume:
-    name: "var-lib-psql-data"
+	const expectedPersistenVolume4GiB = `  - persistentVolume:
+    name: "data"
     accessMode: "ReadWrite"
-    size: 4
+    size: "4Gi"
 `
 
-	assert.Equal(expectedPersistenVolume1GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 1}))
+	// This has a dash
+	const expectedPersistenVolume2GiB = `  - persistentVolume:
+    name: "data-2"
+    accessMode: "ReadWrite"
+    size: "2Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", -1}))
+	// This has two dashes
+	const expectedPersistenVolume3GiB = `  - persistentVolume:
+    name: "3-data-3"
+    accessMode: "ReadWrite"
+    size: "3Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 0}))
+	// This has a slashes
+	const expectedPersistenVolume5GiB = `  - persistentVolume:
+    name: "name"
+    accessMode: "ReadWrite"
+    size: "5Gi"
+`
 
-	assert.Equal(expectedPersistenVolume4GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"/var/lib/psql/data", 4}))
+	// This has two slashes
+	const expectedPersistenVolume6GiB = `  - persistentVolume:
+    name: "org_name"
+    accessMode: "ReadWrite"
+    size: "6Gi"
+`
 
+	assert.Equal(expectedPersistenVolume1GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", "1Gi"}))
+
+	assert.Equal(expectedPersistenVolume4GiBDefault, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", ""}))
+
+	assert.Equal(expectedPersistenVolume4GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", "4Gi"}))
+
+	assert.Equal(expectedPersistenVolume2GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data-2", "2Gi"}))
+
+	assert.Equal(expectedPersistenVolume3GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"3-data-3", "3Gi"}))
+
+	assert.Equal(expectedPersistenVolume5GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"name", "5Gi"}))
+
+	assert.Equal(expectedPersistenVolume6GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"org_name", "6Gi"}))
 }
 
 func TestInLabels(t *testing.T) {
@@ -68,10 +105,33 @@ func TestGetNuleculeVolumesFromLabels(t *testing.T) {
 		"io.k8s.display-name":                            "dont want it",
 	}
 
-	correctAnswer := map[string]string{
-		"DATA": "want that one too",
-		"LOGS": "want this it",
+	correctAnswer := []NuleculePersistentVolume{
+		NuleculePersistentVolume{Name: "data", Size: "4Gi"}, NuleculePersistentVolume{Name: "logs", Size: "4Gi"},
 	}
 
 	assert.Equal(correctAnswer, GetNuleculeVolumesFromLabels(labels))
+}
+
+func TestGuessFromDockerfile(t *testing.T) {
+	assert := assert.New(t)
+
+	viper.Set("Experimental", true) // simulate --experimental command line flag
+
+	_, nuleculeStruct, err := GuessFromDockerfile("../../test-fixtures/Dockerfile-postgresql.rhel7")
+	// test if it did guess without any error
+	assert.Nil(err)
+	assert.NotNil(nuleculeStruct)
+
+	// lets see if we got all the content we want
+	assert.Contains(nuleculeStruct, "specversion: 0.0.2")
+	assert.Contains(nuleculeStruct, "  appversion: \"9.4-1\"")
+	assert.Contains(nuleculeStruct, "    name: \"data\"")
+	assert.Contains(nuleculeStruct, "    size: \"1Gi\"")
+	assert.Contains(nuleculeStruct, "    name: \"logs\"")
+	assert.Contains(nuleculeStruct, "    size: \"512Mi\"")
+
+	// and parse the yaml, just to be sure
+	app := nulecule.ContainerApplication{}
+	unmarschalError := yaml.Unmarshal([]byte(nuleculeStruct), &app)
+	assert.NotNil(unmarschalError)
 }

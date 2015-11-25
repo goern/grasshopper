@@ -6,24 +6,21 @@ ENV POSTGRESQL_VERSION=9.4 \
     HOME=/var/lib/pgsql \
     PGUSER=postgres
 
+# Labels consumed by OpenShift
 LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database management system" \
       io.k8s.display-name="PostgreSQL 9.4" \
       io.openshift.expose-services="5432:postgresql" \
       io.openshift.tags="database,postgresql,postgresql94,rh-postgresql94"
 
 # Labels consumed by Nulecule Specification
-# Volumes:
-#  * /var/lib/psql/data   - Database cluster for PostgreSQL
 # Environment:
 #  * $POSTGRESQL_USER     - Database user name
 #  * $POSTGRESQL_PASSWORD - User's password
 #  * $POSTGRESQL_DATABASE - Name of the database to create
 #  * $POSTGRESQL_ADMIN_PASSWORD (Optional) - Password for the 'postgres'
 #                           PostgreSQL administrative account
-LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data" \
-      io.projectatomic.nulecule.volume.logs="/var/log/psql/"
-LABEL io.projectatomic.nulecule.environment.required="POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE"
-LABEL io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD, LAME_NAME"
+LABEL io.projectatomic.nulecule.environment.required="POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE" \
+      io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD"
 
 # Labels consumed by Red Hat build service
 LABEL Component="rh-postgresql94" \
@@ -61,7 +58,13 @@ ENV BASH_ENV=/var/lib/pgsql/scl_enable \
     ENV=/var/lib/pgsql/scl_enable \
     PROMPT_COMMAND=". /var/lib/pgsql/scl_enable"
 
-VOLUME ["/var/lib/pgsql/data"]
+# Labels consumed by Nulecule Specification
+# Volumes:
+#  * /var/lib/psql/data   - Database cluster for PostgreSQL
+#  * /var/log/postgresql  - logfile location for PostgreSQL
+LABEL io.projectatomic.nulecule.volume.data="/var/lib/psql/data,1Gi" \
+      io.projectatomic.nulecule.volume.logs="/var/log/postgresql, 512Mi"
+VOLUME ["/var/lib/pgsql/data", "/var/log/postgresql"]
 
 USER 26
 
