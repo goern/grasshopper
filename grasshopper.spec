@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.0.46
+Version:        0.0.47
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -58,6 +58,14 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc %{_mandir}/man8/grasshopper.8*
 
 %changelog
+* Wed Nov 25 2015 Christoph Görn <goern@redhat.com> 0.0.47-1
+- finish the guess command, add some testing for it (goern@redhat.com)
+- add tags generation (goern@redhat.com)
+- fix GetNuleculeVolumesFromLabels(), remove snippetsFromLabels() and add some
+  more tests (goern@redhat.com)
+- add new test fixture for grasshopper nulecule guess (goern@redhat.com)
+- make index behave the same as index list (vaclav.pavlin@gmail.com)
+
 * Thu Nov 19 2015 Christoph Görn <goern@redhat.com> 0.0.46-1
 - add some more Nulecule guessing from Dockerfile (goern@redhat.com)
 - add --experimental flag (goern@redhat.com)
