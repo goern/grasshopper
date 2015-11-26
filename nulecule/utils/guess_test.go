@@ -105,12 +105,14 @@ func TestGetNuleculeVolumesFromLabels(t *testing.T) {
 		"io.k8s.display-name":                            "dont want it",
 	}
 
-	// ordering could not always be preserved, so data, logs is same as logs, data but test will fail for 2nd result
 	correctAnswer := []NuleculePersistentVolume{
 		NuleculePersistentVolume{Name: "data", Size: "4Gi"}, NuleculePersistentVolume{Name: "logs", Size: "4Gi"},
 	}
 
-	assert.Equal(correctAnswer, GetNuleculeVolumesFromLabels(labels))
+	for _, answer := range correctAnswer {
+		assert.Contains(GetNuleculeVolumesFromLabels(labels), answer)
+	}
+
 }
 
 func TestGuessFromDockerfile(t *testing.T) {
