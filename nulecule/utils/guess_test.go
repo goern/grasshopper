@@ -105,6 +105,7 @@ func TestGetNuleculeVolumesFromLabels(t *testing.T) {
 		"io.k8s.display-name":                            "dont want it",
 	}
 
+	// ordering could not always be preserved, so data, logs is same as logs, data but test will fail for 2nd result
 	correctAnswer := []NuleculePersistentVolume{
 		NuleculePersistentVolume{Name: "data", Size: "4Gi"}, NuleculePersistentVolume{Name: "logs", Size: "4Gi"},
 	}
@@ -134,4 +135,19 @@ func TestGuessFromDockerfile(t *testing.T) {
 	app := nulecule.ContainerApplication{}
 	unmarschalError := yaml.Unmarshal([]byte(nuleculeStruct), &app)
 	assert.NotNil(unmarschalError)
+}
+
+func TestSnippetsFromLabelsMap(t *testing.T) {
+	assert := assert.New(t)
+
+	labels := map[string]string{
+		"io.k8s.description":  "This is a map of labels used for testing",
+		"io.k8s.display-name": "Test Case TestSnippetsFromLabelsMap",
+		"Version":             "1.0",
+	}
+
+	result := snippetsFromLabelsMap(labels)
+	assert.NotNil(result)
+
+	assert.Contains(result, "1.0")
 }
