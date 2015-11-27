@@ -217,10 +217,11 @@ func GetNuleculeVolumesFromLabels(labels map[string]string) []NuleculePersistent
 func snippetsFromLabelsMap(labels map[string]string) string {
 	var buffer bytes.Buffer
 
-	fmt.Fprint(&buffer, `---
+	fmt.Fprintf(&buffer, `---
 specversion: 0.0.2
-id: `)
-	fmt.Fprint(&buffer, generateNuleculeID(labels["io.k8s.display-name"]))
+id: %s
+
+`, generateNuleculeID(labels["io.k8s.display-name"]))
 
 	// gathers some data to start with
 	if InLabels("io.k8s.description", labels) && InLabels("io.k8s.display-name", labels) {
