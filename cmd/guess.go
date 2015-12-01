@@ -40,6 +40,7 @@ var GuessCmd = &cobra.Command{
 		if len(args) < 1 {
 			cmd.Usage()
 			jww.FATAL.Println("path to a Dockerfile is required but not supplied")
+			return
 		}
 
 		// if we got a Dockerfile
