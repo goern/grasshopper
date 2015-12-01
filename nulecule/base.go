@@ -4,7 +4,7 @@ package nulecule
 
 const (
 	//GrasshopperVersion is Grasshopper version
-	GrasshopperVersion = "0.0.4"
+	GrasshopperVersion = "0.2.0"
 
 	//NuleculeVersion is the version of the Nulecule specification that Grasshopper is implementing
 	NuleculeVersion = "0.0.2"
@@ -50,7 +50,7 @@ type ContainerApplication struct {
 	Specversion  string
 	Metadata     *Metadata
 	Graph        []Component
-	Requirements []Requirement
+	Requirements []interface{} // FIXME this is dangerous, as it may container anything
 }
 
 //Metadata arbitrary_data is not supported by Grasshopper, represents a http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject
@@ -73,7 +73,7 @@ type Param struct {
 	Description string
 	Constraints Constraint `yaml:"constraints"`
 	Default     string
-	Hidden      bool
+	Required    bool
 }
 
 //Constraint is a struct representing a constaint for a parameter object, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#constraintObject
@@ -102,11 +102,11 @@ type Component struct {
 	Name      string
 	Source    string
 	Params    []Param
-	Artifacts map[string][]string // FIXME this should really be a ArtifactEntry
+	Artifacts map[string]interface{} // thanks vbatts!
 }
 
-//Requirement is a list of requirements of the Container Application, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject, Grasshopper only supports Storage Requirement
-type Requirement struct {
+//StorageRequirement is a list of requirements of the Container Application, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
+type StorageRequirement struct {
 	Name       string
 	AccessMode string
 	Size       int

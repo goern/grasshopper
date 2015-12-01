@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="This will demo how to translate a Dockerfile into a Nulecule using Grasshopper">
+  <meta name="author" content="Christoph Görn">
+
+  <title>From Dockerfile to Nulecule</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+  <style>
+  /*
+  Monokai style - ported by Luigi Maselli - http://grigio.org
+  */
+
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: #272822; color: #ddd;
+  }
+
+  .hljs-tag,
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-strong,
+  .hljs-name {
+    color: #f92672;
+  }
+
+  .hljs-code {
+    color: #66d9ef;
+  }
+
+  .hljs-class .hljs-title {
+    color: white;
+  }
+
+  .hljs-attribute,
+  .hljs-symbol,
+  .hljs-regexp,
+  .hljs-link {
+    color: #bf79db;
+  }
+
+  .hljs-string,
+  .hljs-bullet,
+  .hljs-subst,
+  .hljs-title,
+  .hljs-section,
+  .hljs-emphasis,
+  .hljs-type,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-selector-attr,
+  .hljs-selector-pseudo,
+  .hljs-addition,
+  .hljs-variable,
+  .hljs-template-tag,
+  .hljs-template-variable {
+    color: #a6e22e;
+  }
+
+  .hljs-comment,
+  .hljs-quote,
+  .hljs-deletion,
+  .hljs-meta {
+    color: #75715e;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-doctag,
+  .hljs-title,
+  .hljs-section,
+  .hljs-type,
+  .hljs-selector-id {
+    font-weight: bold;
+  }
+
+  /**************************
+    DEFAULT BOOTSTRAP STYLES
+  **************************/
+
+  .btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active,
+  .open .dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #3276b1;
+    border-color: #285e8e;
+  }
+
+  /***********************
+    OUTLINE BUTTONS
+  ************************/
+
+  .btn.outline {
+      background: none;
+      box-shadow: none;
+  }
+  .btn-primary.outline {
+      border: none;
+      color: #0099cc;
+  }
+  .btn-primary.outline:hover, .btn-primary.outline:focus, .btn-primary.outline:active, .btn-primary.outline.active, .open > .dropdown-toggle.btn-primary {
+      color: #33a6cc;
+      border-color: #33a6cc;
+  }
+  .btn-primary.outline:active, .btn-primary.outline.active {
+      color: #007299;
+      box-shadow: none;
+  }
+
+  /***********************
+    CUSTON BTN VALUES
+  ************************/
+
+  .btn {
+      border: 0 none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+  }
+  .btn:focus, .btn:active:focus, .btn.active:focus {
+      outline: 0 none;
+  }
+  ul {
+    list-style-type: none;
+  }
+  </style>
+</head>
+<body>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Command Line</h1>
+          <button id="clear" class="btn btn-primary btn-xs outline" type="submit">clear</button> ;
+          <button id="cat" class="btn btn-primary btn-xs outline" type="submit">cat ./Dockerfile-postgresql.rhel7</button> ;
+          <button id="guess" class="btn btn-primary btn-xs outline" type="submit">grasshopper nulecule guess ./Dockerfile-postgresql.rhel7</button> <!-- ;
+          <button id="process" class="btn btn-primary btn-xs outline" type="submit">grasshopper nulecule process</button -->
+        </div>
+      </div>
+
+
+    <div class="row">
+      <div class="col-md-5">
+        <h2>The Nulecule</h2>
+          <pre><code class="hljs" id="nulecule" style="display: none;">
+---
+specversion: 0.0.2
+<span class="hljs-emphasis" id="id-span-l">id: PostgreSQL_9.4</span>
+metadata:
+<span class="hljs-emphasis" id="name-span-l">  name: "PostgreSQL 9.4"</span>
+<span class="hljs-emphasis" id="version-span-l">  appversion: "9.4-1"</span>
+  <span class="hljs-emphasis" id="desc-span-l">description: "PostgreSQL is an advanced Object-Relational database management system"</span>
+requirements:
+  - persistentVolume:
+<span class="hljs-emphasis" id="pv-name-span-l">    name: "data"</span>
+    accessMode: "ReadWrite"
+<span class="hljs-emphasis" id="pv-size-span-l">    size: "1Gi"</span>
+  - persistentVolume:
+<span class="hljs-emphasis pv-name-span-r">    name: "logs"</span>
+    accessMode: "ReadWrite"
+<span class="hljs-emphasis pv-size-span-r">    size: "512Mi"</span>
+
+          </code></pre>
+        </div>
+        <div class="col-md-2">
+          <h2>What is it?</h2>
+          <div id="id-text" style="display:none;">This is the ID of our Nulecule, it is generated from <code>io.k8s.display-name</code> LABEL. It is a simple algorithm that is used to generate the ID</div>
+          <div id="name-text" style="display:none;">The name of this Nulecule has also been generated from <code>io.k8s.display-name</code> LABEL.</div>
+          <div id="version-text" style="display:none;">The Nulecule's appversion is kept the same a the Red Hat version, it consits of the <code>Version</code> and <code>Release</code> LABEL.</div>
+          <div id="desc-text" style="display:none;">The <code>io.k8s.description</code> LABEL is translated to be the description of the Nulecule.</div>
+          <div id="pv-name-text" style="display:none;"><code>io.projectatomic.nulecule.volume</code> define Nulecule storage requirements, for any number of volumes. The name of the storage requirement is taken from the last part of the label's key itself. The path is not used by a Nulecule.</div>
+          <div id="pv-size-text" style="display:none;">The size required by the nulecule is also guessed from each <code>io.projectatomic.nulecule.volume</code> LABEL, it is appended to the path.</div>
+        </div>
+      <div class="col-md-5">
+        <h2>A Dockerfile</h2>
+          <pre><code class="hljs" id="dockerfile" style="display: none;">
+FROM rhel7
+
+ENV POSTGRESQL_VERSION=9.4 HOME=/var/lib/pgsql PGUSER=postgres
+
+# Labels consumed by OpenShift
+LABEL <span class="hljs-emphasis desc-span-r">io.k8s.description="PostgreSQL is an advanced Object-Relational database management system"</span> \
+      <span class="hljs-emphasis name-span-r id-span-r">io.k8s.display-name="PostgreSQL 9.4"</span> \
+      io.openshift.expose-services="5432:postgresql" \
+      io.openshift.tags="database,postgresql,postgresql94,rh-postgresql94"
+
+# Labels consumed by Nulecule Specification
+LABEL io.projectatomic.nulecule.environment.required="POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE" \
+      io.projectatomic.nulecule.environment.optional="POSTGRESQL_ADMIN_PASSWORD"
+
+# Labels consumed by Red Hat build service
+LABEL Component="rh-postgresql94" \
+      Name="openshift3/postgresql-94-rhel7" \
+      <span class="hljs-emphasis version-span-r">Version="9.4"</span> \
+      <span class="hljs-emphasis version-span-r">Release="1"</span>
+
+EXPOSE 5432
+
+[ ... some stuff skipped ... ]
+
+# Labels consumed by Nulecule Specification
+LABEL <span class="hljs-emphasis pv-name-span-r">io.projectatomic.nulecule.volume.data="/var/lib/psql/data,</span><span class="hljs-emphasis pv-size-span-r">1Gi"</span> \
+      <span class="hljs-emphasis pv-name-span-r">io.projectatomic.nulecule.volume.logs="/var/log/postgresql,</span><span class="hljs-emphasis pv-size-span-r"> 512Mi"</span>
+VOLUME ["/var/lib/pgsql/data", "/var/log/postgresql"]
+
+ENTRYPOINT ["run-postgresql.sh"]
+CMD ["postgres"]
+
+          </code></pre>
+        </div>
+    </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+var a = ["id", "name", "version", "desc", "pv-name", "pv-size"];
+a.forEach(function(entry) {
+    console.log(entry);
+    $('#'+entry+'-span-l').hover(
+    function () {
+      $("#"+entry+"-text").show();
+      $("."+entry+"-span-r").css('color', 'orange').css('font-weight', 'bold');
+    },
+    function () {
+      $("."+entry+"-span-r").css('color', '#a6e22e');
+      $("#"+entry+"-text").hide();
+    }
+    );
+
+    $(function(){
+      $('#clear').on('click', function(e){
+        e.preventDefault();
+        $("#nulecule").hide();
+        $("#dockerfile").hide();
+      });
+    });
+    $(function(){
+      $('#cat').on('click', function(e){
+        e.preventDefault();
+        $("#dockerfile").show();
+      });
+    });
+    $(function(){
+      $('#guess').on('click', function(e){
+        e.preventDefault();
+        $("#dockerfile").show();
+        $("#nulecule").show();
+      });
+    });
+});
+
+</script>
+</body>
+</html>

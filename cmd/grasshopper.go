@@ -78,6 +78,9 @@ var bashAutogenerateCmd = &cobra.Command{
 //Verbose will enable more verbose logging
 var Verbose bool
 
+//Quiet is the opposite of Verbose
+var Quiet bool
+
 //DryRun will pretend to do something, but really really doesnt do anything
 var DryRun bool
 
@@ -92,6 +95,7 @@ var minversion string // set by -X via Makefile
 
 //Execute adds all child commands to the root command GrasshopperCmd and sets flags appropriately.
 func Execute() {
+	jww.SetStdoutThreshold(jww.LevelInfo)
 
 	jww.INFO.Printf("The Grasshopper has started at %s\n", time.Now())
 
@@ -143,6 +147,10 @@ func Execute() {
 
 // InitializeConfig initializes a config file with sensible default configuration flags.
 func InitializeConfig() {
+	if Quiet {
+		jww.SetStdoutThreshold(jww.LevelWarn)
+	}
+
 	viper.SetConfigName("grasshopper")          // name of config file (without extension)
 	viper.AddConfigPath("/etc/grasshopper.d/")  // path to look for the config file
 	viper.AddConfigPath("$HOME/.grasshopper.d") // call multiple times to add many search paths
@@ -151,11 +159,12 @@ func InitializeConfig() {
 	// read config from storage
 	err := viper.ReadInConfig() // FIXME
 	if err != nil {
-		jww.INFO.Println("Unable to locate Config file. I will fall back to my defaults...")
+		jww.WARN.Println("Unable to locate Config file. I will fall back to my defaults...")
 	}
 
 	// default settings
 	viper.SetDefault("Verbose", false)
+	viper.SetDefault("Quiet", false)
 	viper.SetDefault("DryRun", false)
 	viper.SetDefault("DoLog", true)
 	viper.SetDefault("Experimental", true)
@@ -163,6 +172,9 @@ func InitializeConfig() {
 	// bind config to command flags
 	if grasshopperCmdV.PersistentFlags().Lookup("verbose").Changed {
 		viper.Set("Verbose", Verbose)
+	}
+	if grasshopperCmdV.PersistentFlags().Lookup("quiet").Changed {
+		viper.Set("Quiet", Quiet)
 	}
 	if grasshopperCmdV.PersistentFlags().Lookup("log").Changed {
 		viper.Set("DoLog", DoLog)
@@ -184,6 +196,7 @@ func InitializeConfig() {
 //Initializes flags
 func init() {
 	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Quiet, "quiet", "q", false, "quiet output")
 	GrasshopperCmd.PersistentFlags().BoolVarP(&DoLog, "log", "l", true, "write logging output to file")
 	GrasshopperCmd.PersistentFlags().BoolVarP(&Experimental, "experimental", "x", true, "write experimental output to stdout")
 
