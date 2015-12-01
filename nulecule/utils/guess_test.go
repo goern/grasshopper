@@ -153,3 +153,23 @@ func TestSnippetsFromLabelsMap(t *testing.T) {
 
 	assert.Contains(result, "1.0")
 }
+
+func TestGetNuleculeParametersFromLabels(t *testing.T) {
+	assert := assert.New(t)
+
+	labels := map[string]string{
+		"io.projectatomic.nulecule.environment.required": "POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE",
+		"io.projectatomic.nulecule.environment.optional": "POSTGRESQL_ADMIN_PASSWORD",
+	}
+
+	correctAnswer := []nulecule.Param{
+		nulecule.Param{"POSTGRESQL_USER", "", nulecule.Constraint{}, "", true},
+		nulecule.Param{"POSTGRESQL_PASSWORD", "", nulecule.Constraint{}, "", true},
+		nulecule.Param{"POSTGRESQL_DATABASE", "", nulecule.Constraint{}, "", true},
+		nulecule.Param{"POSTGRESQL_ADMIN_PASSWORD", "", nulecule.Constraint{}, "", false},
+	}
+
+	for _, answer := range correctAnswer {
+		assert.Contains(GetNuleculeParametersFromLabels(labels), answer)
+	}
+}

@@ -30,23 +30,33 @@ import (
 	"text/template"
 	"unicode"
 
+	"github.com/goern/grasshopper/nulecule"
 	jww "github.com/spf13/jwalterweatherman"
 	"github.com/spf13/viper"
 
 	"github.com/docker/docker/builder/dockerfile/parser"
 )
 
+//NuleculeParameterTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#paramsObject snippet
+const NuleculeParameterTemplate = `      - name: "{{.Name}}"
+{{if .Description}}        description: "{{.Description}}"{{else}}{{if .Required}}        description: "{{.Name}} is a REQUIRED parameter"{{end}}{{end}}
+{{if .Default}}        default: "{{.Default}}"{{end}}
+`
+
+// FIXME indent level will be a problem here
+
 //NuleculePersistentVolumeTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject snippet
 const NuleculePersistentVolumeTemplate = `  - persistentVolume:
-    name: "{{.Name}}"
-    accessMode: "ReadWrite"
-{{if .Size }}    size: "{{.Size}}"{{else}}    size: "4Gi" # GB by default{{end}}
+      name: "{{.Name}}"
+      accessMode: "ReadWrite"
+{{if .Size }}      size: "{{.Size}}"{{else}}      size: "4Gi" # GB by default{{end}}
 `
 
 //NuleculePersistentVolume is the specification for a http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
-type NuleculePersistentVolume struct {
+type NuleculePersistentVolume struct { // FIXME cant this be StorageRequirement from base?
 	Name string
-	Size string
+	//  	AccessMode string
+	Size string // FIXME int?? long?
 }
 
 //NuleculeMetadataTemplate is a template to generate a YAML http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#metadataObject snippet
@@ -178,6 +188,22 @@ func generateNuleculeMetadata(spec NuleculeMetadata) string {
 	return buffer.String()
 }
 
+func generateNuleculeParameter(spec nulecule.Param) string {
+	var buffer bytes.Buffer
+
+	// Create a new template and parse the NuleculeParameterTemplate into it.
+	// TODO set indent level based on position in graph
+	t := template.Must(template.New("Parameter").Parse(NuleculeParameterTemplate))
+
+	err := t.Execute(&buffer, spec)
+	if err != nil {
+		jww.ERROR.Println("generating Nulecule Parameter snippet:", err)
+		return ""
+	}
+
+	return buffer.String()
+}
+
 //InLabels will test it a label is in a LABELs map (derived from Dockerfile)
 func InLabels(label string, labels map[string]string) bool {
 	for key := range labels {
@@ -189,10 +215,9 @@ func InLabels(label string, labels map[string]string) bool {
 	return false
 }
 
-//GetNuleculeVolumesFromLabels will return a map of Nulecule volumes found
-// within the Dockerfile. This will return a map[string]string containing
-// Name -> Path, Size
-// all strings are converted to lower case letters
+//GetNuleculeVolumesFromLabels will return a list of Nulecule volumes found
+// within a Dockerfile. It will return a list containing
+// NuleculePersistentVolume. All strings are converted to lower case letters
 func GetNuleculeVolumesFromLabels(labels map[string]string) []NuleculePersistentVolume {
 	var result []NuleculePersistentVolume
 
@@ -214,6 +239,31 @@ func GetNuleculeVolumesFromLabels(labels map[string]string) []NuleculePersistent
 	return result
 }
 
+//GetNuleculeParametersFromLabels will return a list of Nulecule parameters found
+// within a Dockerfile. It will return a list containing Param.
+// All strings are converted to lower case letters
+func GetNuleculeParametersFromLabels(labels map[string]string) []nulecule.Param {
+	var result []nulecule.Param
+
+	for key, value := range labels {
+		parts := strings.Split(strings.ToLower(key), ".")
+		if strings.Join(parts[0:len(parts)-1], ".") == strings.ToLower("io.projectatomic.nulecule.environment") {
+			// we need to split the value by , and generate for each items a parameter
+			params := strings.Split(strings.ToUpper(value), ",")
+
+			for _, param := range params {
+				jww.DEBUG.Printf("got Parameter: %s, %s\n", SpaceMap(param), parts[len(parts)-1])
+
+				result = append(result, nulecule.Param{SpaceMap(param), "", nulecule.Constraint{}, "", isRequired(parts[len(parts)-1])})
+
+			}
+		}
+	}
+
+	return result
+}
+
+// This is the real thing, it will generate the Nulecule file from all the snippets we have gathered.
 func snippetsFromLabelsMap(labels map[string]string) string {
 	var buffer bytes.Buffer
 
@@ -237,7 +287,23 @@ id: %s
 		fmt.Fprint(&buffer, generateNuleculeMetadata(NuleculeMetadata{labels["io.k8s.display-name"], versionString, labels["io.k8s.description"], ""}))
 	}
 
+	fmt.Fprintf(&buffer, `graph:
+  - name: %s
+`, generateNuleculeID(labels["io.k8s.display-name"]))
+
 	// ok, lets see if we need to generate some requiremets for http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject
+	parameters := GetNuleculeParametersFromLabels(labels)
+	if len(parameters) > 0 {
+		jww.WARN.Println("Grasshopper will not generate a Nuleculde Parameters snippet with constraints!")
+		jww.DEBUG.Println("Grasshopper is able to generate a Nuleculde Parameters snippet")
+
+		fmt.Fprintln(&buffer, "    params:")
+
+		for _, parameter := range parameters {
+			fmt.Fprintf(&buffer, generateNuleculeParameter(parameter))
+		}
+	}
+
 	volumes := GetNuleculeVolumesFromLabels(labels)
 
 	// ja, looks like we need to...
@@ -255,4 +321,8 @@ id: %s
 
 func generateNuleculeID(in string) string {
 	return strings.Replace(in, " ", "_", -1)
+}
+
+func isRequired(maybe string) bool {
+	return strings.Contains(maybe, "required")
 }
