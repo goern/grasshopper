@@ -4,7 +4,7 @@ package nulecule
 
 const (
 	//GrasshopperVersion is Grasshopper version
-	GrasshopperVersion = "0.1.0"
+	GrasshopperVersion = "0.2.0"
 
 	//NuleculeVersion is the version of the Nulecule specification that Grasshopper is implementing
 	NuleculeVersion = "0.0.2"
