@@ -17,51 +17,51 @@ func TestGenerateNuleculePersistentVolume(t *testing.T) {
 
 	// This is for 1GiB
 	const expectedPersistenVolume1GiB = `  - persistentVolume:
-    name: "data"
-    accessMode: "ReadWrite"
-    size: "1Gi"
+      name: "data"
+      accessMode: "ReadWrite"
+      size: "1Gi"
 `
 
 	// This is a default config, using 4GiB
 	const expectedPersistenVolume4GiBDefault = `  - persistentVolume:
-    name: "data"
-    accessMode: "ReadWrite"
-    size: "4Gi" # GB by default
+      name: "data"
+      accessMode: "ReadWrite"
+      size: "4Gi" # GB by default
 `
 
 	// This is a claim for 4GiB
 	const expectedPersistenVolume4GiB = `  - persistentVolume:
-    name: "data"
-    accessMode: "ReadWrite"
-    size: "4Gi"
+      name: "data"
+      accessMode: "ReadWrite"
+      size: "4Gi"
 `
 
 	// This has a dash
 	const expectedPersistenVolume2GiB = `  - persistentVolume:
-    name: "data-2"
-    accessMode: "ReadWrite"
-    size: "2Gi"
+      name: "data-2"
+      accessMode: "ReadWrite"
+      size: "2Gi"
 `
 
 	// This has two dashes
 	const expectedPersistenVolume3GiB = `  - persistentVolume:
-    name: "3-data-3"
-    accessMode: "ReadWrite"
-    size: "3Gi"
+      name: "3-data-3"
+      accessMode: "ReadWrite"
+      size: "3Gi"
 `
 
 	// This has a slashes
 	const expectedPersistenVolume5GiB = `  - persistentVolume:
-    name: "name"
-    accessMode: "ReadWrite"
-    size: "5Gi"
+      name: "name"
+      accessMode: "ReadWrite"
+      size: "5Gi"
 `
 
 	// This has two slashes
 	const expectedPersistenVolume6GiB = `  - persistentVolume:
-    name: "org_name"
-    accessMode: "ReadWrite"
-    size: "6Gi"
+      name: "org_name"
+      accessMode: "ReadWrite"
+      size: "6Gi"
 `
 
 	assert.Equal(expectedPersistenVolume1GiB, generateNuleculePersistentVolume(NuleculePersistentVolume{"data", "1Gi"}))
@@ -136,7 +136,7 @@ func TestGuessFromDockerfile(t *testing.T) {
 	// and parse the yaml, just to be sure
 	app := nulecule.ContainerApplication{}
 	unmarschalError := yaml.Unmarshal([]byte(nuleculeStruct), &app)
-	assert.NotNil(unmarschalError)
+	assert.Nil(unmarschalError)
 }
 
 func TestSnippetsFromLabelsMap(t *testing.T) {
