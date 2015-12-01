@@ -27,7 +27,7 @@ func Parse(r io.Reader) (*ContainerApplication, error) {
 
 	if unmarschalError != nil {
 		jww.ERROR.Println(unmarschalError)
-		//		return nil, unmarschalError // FIXME ERROR: 2015/11/21 yaml: unmarshal errors: line 18: cannot unmarshal !!map into string
+		return nil, unmarschalError // FIXME ERROR: 2015/11/21 yaml: unmarshal errors: line 18: cannot unmarshal !!map into string
 
 	}
 

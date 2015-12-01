@@ -4,7 +4,7 @@ package nulecule
 
 const (
 	//GrasshopperVersion is Grasshopper version
-	GrasshopperVersion = "0.0.4"
+	GrasshopperVersion = "0.1.0"
 
 	//NuleculeVersion is the version of the Nulecule specification that Grasshopper is implementing
 	NuleculeVersion = "0.0.2"
@@ -102,7 +102,7 @@ type Component struct {
 	Name      string
 	Source    string
 	Params    []Param
-	Artifacts map[string][]string // FIXME this should really be a ArtifactEntry
+	Artifacts map[string]interface{} // thanks vbatts!
 }
 
 //Requirement is a list of requirements of the Container Application, see http://www.projectatomic.io/nulecule/spec/0.0.2/index.html#storageRequirementsObject, Grasshopper only supports Storage Requirement
