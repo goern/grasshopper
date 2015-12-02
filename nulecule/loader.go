@@ -22,20 +22,28 @@
 package nulecule
 
 import (
-	"fmt"
+	"net/http"
 
-	"github.com/hashicorp/go-multierror"
+	jww "github.com/spf13/jwalterweatherman"
 )
 
-// Validate validates the Nulecule file
-func (nulecule *ContainerApplication) Validate() error {
-	var result error
-
-	// lets see if we are supposed to work on a 0.0.2 Nulecule
-	if nulecule.Specversion != "0.0.2" {
-		result = multierror.Append(result, fmt.Errorf(
-			"'specversion' MUST be 0.0.2"))
+//LoadNulecule will load a Nulecule from a URL and follow all references
+// to 'external' graph components aka other Nulecules.
+// It will return a fully populated ContainerApplication struct
+func LoadNulecule(URL string) (*ContainerApplication, error) {
+	// load the Nulecule from the URL
+	resp, err := http.Get(URL)
+	if err != nil {
+		jww.FATAL.Printf("cant load Nulecule file from %s", URL)
 	}
 
-	return result
+	defer resp.Body.Close()
+	app, err := Parse(resp.Body)
+
+	// figure out which graph components have a source attribute,
+	// follow them and LoadNulecule()
+
+	// merge loaded reference into parent ContainerApplication
+
+	return app, err
 }

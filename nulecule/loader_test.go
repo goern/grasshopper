@@ -22,20 +22,26 @@
 package nulecule
 
 import (
-	"fmt"
+	"testing"
 
-	"github.com/hashicorp/go-multierror"
+	"github.com/stretchr/testify/assert"
 )
 
-// Validate validates the Nulecule file
-func (nulecule *ContainerApplication) Validate() error {
-	var result error
+func TestLoadNulecule(t *testing.T) {
+	assert := assert.New(t)
 
-	// lets see if we are supposed to work on a 0.0.2 Nulecule
-	if nulecule.Specversion != "0.0.2" {
-		result = multierror.Append(result, fmt.Errorf(
-			"'specversion' MUST be 0.0.2"))
-	}
+	// set up local http server and serve files under test-fixtures/ TODO(goern)
 
-	return result
+	app, err := LoadNulecule("https://raw.githubusercontent.com/goern/grasshopper/master/test-fixtures/Nulecule")
+
+	assert.Nil(err)
+	assert.NotNil(app)
+
+	/*
+		b, err := json.Marshal(app)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+		fmt.Println(b)
+	*/
 }
