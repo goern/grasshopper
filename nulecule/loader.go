@@ -20,6 +20,7 @@
 package nulecule
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strings"
@@ -50,8 +51,9 @@ func LoadNulecule(URL string) (*ContainerApplication, error) {
 }
 
 func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
-	// docker://registry/repository/image:tag
 	splitURL := strings.Split(URL, "/")
+	var pullImageOutputStream bytes.Buffer
+	var nuleculeOutputStream bytes.Buffer
 
 	client, err := docker.NewClient("unix:///var/run/docker.sock")
 
@@ -62,13 +64,37 @@ func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
 
 	// TODO make registry a config option
 	err = client.PullImage(
-		docker.PullImageOptions{splitURL[2] + "/" + splitURL[3], "registry.docker.com", "latest", nil, false},
+		docker.PullImageOptions{splitURL[2] + "/" + splitURL[3], "registry.docker.com", "latest", &pullImageOutputStream, false},
 		docker.AuthConfiguration{})
+
+	jww.DEBUG.Printf("pullImageOutputStream: %#v\n", pullImageOutputStream.String())
 
 	if err != nil {
 		fmt.Printf("%#v\n", err)
 		return nil, err
 	}
+
+	containerConfig := docker.Config{
+		Image:      splitURL[2] + "/" + splitURL[3],
+		Entrypoint: []string{"/bin/true"},
+	}
+	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: "grasshopper-tmp-thing", Config: &containerConfig})
+	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: container.ID})
+
+	if err != nil {
+		jww.ERROR.Printf("%#v\n", err)
+		return nil, err
+	}
+
+	jww.DEBUG.Printf("started %s as %s\n", splitURL[2]+"/"+splitURL[3], container.ID)
+
+	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&nuleculeOutputStream, container.ID, "/application-entity/Nulecule"})
+	if err != nil {
+		jww.ERROR.Printf("%#v\n", err)
+		return nil, err
+	}
+
+	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeOutputStream.String())
 
 	return nil, err
 }

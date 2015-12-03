@@ -35,10 +35,7 @@ func doFetchFromURL(URL string) {
 
 //FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(cmd *cobra.Command, args []string) {
-	if Verbose { // FIXME do we need this?
-		jww.SetLogThreshold(jww.LevelTrace)
-		jww.SetStdoutThreshold(jww.LevelInfo)
-	}
+	InitializeConfig()
 
 	if len(args) < 1 {
 		cmd.Usage()
