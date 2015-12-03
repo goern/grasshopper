@@ -17,12 +17,14 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Package nulecule will provide some constants required for Grasshopper
-// and all required data structures to run a Nulecule.
 package nulecule
 
 import (
-	"net/http"
+	"errors"
+	"fmt"
+	"strings"
+
+	"github.com/fsouza/go-dockerclient"
 
 	jww "github.com/spf13/jwalterweatherman"
 )
@@ -31,14 +33,13 @@ import (
 // to 'external' graph components aka other Nulecules.
 // It will return a fully populated ContainerApplication struct
 func LoadNulecule(URL string) (*ContainerApplication, error) {
-	// load the Nulecule from the URL
-	resp, err := http.Get(URL)
-	if err != nil {
-		jww.FATAL.Printf("cant load Nulecule file from %s", URL)
+	if !strings.HasPrefix(URL, "docker://") {
+		jww.WARN.Print("Grasshopper can only load Nulecules from docker:// URLs")
+		return nil, errors.New("Not a docker URL schema")
 	}
 
-	defer resp.Body.Close()
-	app, err := Parse(resp.Body)
+	// load the Nulecule from the URL
+	app, err := getNuleculeFileFromDockerImage(URL)
 
 	// figure out which graph components have a source attribute,
 	// follow them and LoadNulecule()
@@ -46,4 +47,28 @@ func LoadNulecule(URL string) (*ContainerApplication, error) {
 	// merge loaded reference into parent ContainerApplication
 
 	return app, err
+}
+
+func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
+	// docker://registry/repository/image:tag
+	splitURL := strings.Split(URL, "/")
+
+	client, err := docker.NewClient("unix:///var/run/docker.sock")
+
+	if err != nil {
+		jww.ERROR.Printf("%#v\n", err)
+		return nil, err
+	}
+
+	// TODO make registry a config option
+	err = client.PullImage(
+		docker.PullImageOptions{splitURL[2] + "/" + splitURL[3], "registry.docker.com", "latest", nil, false},
+		docker.AuthConfiguration{})
+
+	if err != nil {
+		fmt.Printf("%#v\n", err)
+		return nil, err
+	}
+
+	return nil, err
 }

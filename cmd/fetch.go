@@ -21,8 +21,10 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/goern/grasshopper/nulecule"
 	"github.com/spf13/cobra"
 	jww "github.com/spf13/jwalterweatherman"
 )
@@ -44,6 +46,14 @@ func FetchFunction(cmd *cobra.Command, args []string) {
 	}
 
 	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
+	app, err := nulecule.LoadNulecule(args[0])
+
+	if err != nil {
+		jww.ERROR.Printf("Can't load Nulecule from %s\n", args[0])
+		return
+	}
+
+	fmt.Println(app)
 }
 
 //FetchCmd returns an initialized CLI fetch command

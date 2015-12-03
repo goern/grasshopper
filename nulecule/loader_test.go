@@ -17,31 +17,32 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Package nulecule will provide some constants required for Grasshopper
-// and all required data structures to run a Nulecule.
 package nulecule
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLoadNulecule(t *testing.T) {
+func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 	assert := assert.New(t)
 
-	// set up local http server and serve files under test-fixtures/ TODO(goern)
+	app, err := LoadNulecule("http://example.com/Nulecule")
 
-	app, err := LoadNulecule("https://raw.githubusercontent.com/goern/grasshopper/master/test-fixtures/Nulecule")
+	assert.NotNil(err)
+	assert.Equal(errors.New("Not a docker URL schema"), err)
+	assert.Nil(app)
+
+}
+
+func TestLoadNuleculeWithCorrectDockerURL(t *testing.T) {
+	assert := assert.New(t)
+
+	app, err := LoadNulecule("docker://projectatomic/mariadb-centos7-atomicapp")
 
 	assert.Nil(err)
 	assert.NotNil(app)
 
-	/*
-		b, err := json.Marshal(app)
-		if err != nil {
-			fmt.Println("error:", err)
-		}
-		fmt.Println(b)
-	*/
 }
