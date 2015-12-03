@@ -21,8 +21,10 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/goern/grasshopper/nulecule"
 	"github.com/spf13/cobra"
 	jww "github.com/spf13/jwalterweatherman"
 )
@@ -33,10 +35,7 @@ func doFetchFromURL(URL string) {
 
 //FetchFunction is the function that downloads all Nulecule container images
 func FetchFunction(cmd *cobra.Command, args []string) {
-	if Verbose {
-		jww.SetLogThreshold(jww.LevelTrace)
-		jww.SetStdoutThreshold(jww.LevelInfo)
-	}
+	InitializeConfig()
 
 	if len(args) < 1 {
 		cmd.Usage()
@@ -44,6 +43,14 @@ func FetchFunction(cmd *cobra.Command, args []string) {
 	}
 
 	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
+	app, err := nulecule.LoadNulecule(args[0])
+
+	if err != nil {
+		jww.ERROR.Printf("Can't load Nulecule from %s\n", args[0])
+		return
+	}
+
+	fmt.Println(app)
 }
 
 //FetchCmd returns an initialized CLI fetch command
@@ -52,4 +59,13 @@ var FetchCmd = &cobra.Command{
 	Short: "Download application from URL",
 	Long:  `Will download an application from a URL and combine artifacts from the target application and any dependent applications.`,
 	Run:   FetchFunction,
+}
+
+func init() {
+	GrasshopperCmd.AddCommand(FetchCmd)
+
+	FetchCmd.PersistentFlags().String("docker-host", "localhost", "This is the host running the docker endpoint")
+	FetchCmd.PersistentFlags().Bool("docker-tls-verify", true, "perform TLS certificate verification on connect")
+	FetchCmd.PersistentFlags().String("docker-cert-path", "/etc/docker/certs", "X.509 certificate path to be used during TLS certificate verification")
+
 }

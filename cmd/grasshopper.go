@@ -23,7 +23,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -97,8 +96,6 @@ var minversion string // set by -X via Makefile
 func Execute() {
 	jww.SetStdoutThreshold(jww.LevelInfo)
 
-	jww.INFO.Printf("The Grasshopper has started at %s\n", time.Now())
-
 	GrasshopperCmd.SuggestionsMinimumDistance = 1
 
 	//add child commands to the root command.
@@ -111,14 +108,14 @@ func Execute() {
 	NuleculeCmd.AddCommand(GuessCmd)
 	GrasshopperCmd.AddCommand(NuleculeCmd)
 
-	// GrasshopperCmd.AddCommand(FetchCmd)
+	GrasshopperCmd.AddCommand(FetchCmd)
 	// GrasshopperCmd.AddCommand(InstallCmd)
 	// GrasshopperCmd.AddCommand(RunCmd)
 	// GrasshopperCmd.AddCommand(StopCmd)
 	// GrasshopperCmd.AddCommand(UninstallCmd)
 	// GrasshopperCmd.AddCommand(CleanCmd)
 
-	/* FIxME this is nice, but we need a better one!
+	/* FIXME this is nice, but we need a better one!
 	manHeader := &cobra.GenManHeader{
 		Title:   "grasshopper",
 		Section: "1",

@@ -17,40 +17,17 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package nulecule
+//Package utils includes all the we need for the grasshopper
+package utils
 
-import (
-	"testing"
+import "github.com/fsouza/go-dockerclient"
 
-	"github.com/stretchr/testify/assert"
-)
+//PullDockerImage will pull a Docker image and
+func PullDockerImage(name string) bool {
+	client, _ := docker.NewClientFromEnv()
 
-func TestValidate(t *testing.T) {
-	assert := assert.New(t)
+	client.PullImage(docker.PullImageOptions{"docker.io", "goern", "grasshopper", nil, false},
+		docker.AuthConfiguration{})
 
-	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
-
-	if parseError != nil {
-		t.Log(parseError)
-	}
-
-	if assert.NotNil(containerApplication) {
-		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
-
-		valErr := containerApplication.Validate()
-
-		if valErr != nil {
-			t.Log(valErr)
-		}
-	}
-
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule")
-
-	if parseError != nil {
-		t.Log(parseError)
-	}
-
-	if assert.NotNil(containerApplicationBroken) {
-
-	}
+	return true
 }

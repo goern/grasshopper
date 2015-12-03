@@ -20,37 +20,29 @@
 package nulecule
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidate(t *testing.T) {
+func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
+	app, err := LoadNulecule("http://example.com/Nulecule")
 
-	if parseError != nil {
-		t.Log(parseError)
-	}
+	assert.NotNil(err)
+	assert.Equal(errors.New("Not a docker URL schema"), err)
+	assert.Nil(app)
 
-	if assert.NotNil(containerApplication) {
-		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
+}
 
-		valErr := containerApplication.Validate()
+func TestLoadNuleculeWithCorrectDockerURL(t *testing.T) {
+	assert := assert.New(t)
 
-		if valErr != nil {
-			t.Log(valErr)
-		}
-	}
+	app, err := LoadNulecule("docker://projectatomic/mariadb-centos7-atomicapp")
 
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule")
+	assert.Nil(err)
+	assert.NotNil(app)
 
-	if parseError != nil {
-		t.Log(parseError)
-	}
-
-	if assert.NotNil(containerApplicationBroken) {
-
-	}
 }
