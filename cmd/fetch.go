@@ -40,6 +40,7 @@ func FetchFunction(cmd *cobra.Command, args []string) {
 	if len(args) < 1 {
 		cmd.Usage()
 		jww.FATAL.Println("URL to be fetched is missing")
+		return
 	}
 
 	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
