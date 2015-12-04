@@ -36,13 +36,3 @@ func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 	assert.Nil(app)
 
 }
-
-func TestLoadNuleculeWithCorrectDockerURL(t *testing.T) {
-	assert := assert.New(t)
-
-	app, err := LoadNulecule("docker://projectatomic/mariadb-centos7-atomicapp")
-
-	assert.Nil(err)
-	assert.NotNil(app)
-
-}
