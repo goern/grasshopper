@@ -148,16 +148,11 @@ func InitializeConfig() {
 		jww.SetStdoutThreshold(jww.LevelWarn)
 	}
 
-	viper.SetConfigName("grasshopper")          // name of config file (without extension)
-	viper.AddConfigPath("/etc/grasshopper.d/")  // path to look for the config file
-	viper.AddConfigPath("$HOME/.grasshopper.d") // call multiple times to add many search paths
-	viper.AddConfigPath(".")                    // optionally look for config in the working directory
-
-	// read config from storage
-	err := viper.ReadInConfig() // FIXME
-	if err != nil {
-		jww.WARN.Println("Unable to locate Config file. I will fall back to my defaults...")
-	}
+	viper.SetConfigType("json")
+	viper.SetConfigName("grasshopper") // name of config file (without extension)
+	//	viper.AddConfigPath("/etc/grasshopper.d/")  // path to look for the config file
+	//	viper.AddConfigPath("$HOME/.grasshopper.d") // call multiple times to add many search paths
+	viper.AddConfigPath(".") // optionally look for config in the working directory
 
 	// default settings
 	viper.SetDefault("Verbose", false)
@@ -165,6 +160,12 @@ func InitializeConfig() {
 	viper.SetDefault("DryRun", false)
 	viper.SetDefault("DoLog", true)
 	viper.SetDefault("Experimental", true)
+
+	// read config from storage
+	err := viper.ReadInConfig()
+	if err != nil {
+		jww.WARN.Printf("Unable to read Config file. %#v I will fall back to my defaults...", err)
+	}
 
 	// bind config to command flags
 	if grasshopperCmdV.PersistentFlags().Lookup("verbose").Changed {

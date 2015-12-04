@@ -20,15 +20,26 @@
 package nulecule
 
 import (
+	"archive/tar"
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/fsouza/go-dockerclient"
 
 	jww "github.com/spf13/jwalterweatherman"
 )
+
+type DockerEndpoint struct {
+	Schema string // unix or tcp
+	Host   string // empty if unix or hostname or ip address if tcp
+	Port   int    // 0 if unix or port number if tcp
+	Path   string // path to socket if unix or empty
+}
+
+var dockerEndpoint = DockerEndpoint{"unix", "", 0, "/var/run/docker.sock"}
 
 //LoadNulecule will load a Nulecule from a URL and follow all references
 // to 'external' graph components aka other Nulecules.
@@ -55,7 +66,7 @@ func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
 	var pullImageOutputStream bytes.Buffer
 	var nuleculeOutputStream bytes.Buffer
 
-	client, err := docker.NewClient("unix:///var/run/docker.sock")
+	client, err := newClientFromEndpoint(dockerEndpoint)
 
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
@@ -76,7 +87,7 @@ func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
 
 	containerConfig := docker.Config{
 		Image:      splitURL[2] + "/" + splitURL[3],
-		Entrypoint: []string{"/bin/true"},
+		Entrypoint: []string{"/bin/bash"},
 	}
 	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: "grasshopper-tmp-thing", Config: &containerConfig})
 	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: container.ID})
@@ -93,8 +104,38 @@ func getNuleculeFileFromDockerImage(URL string) (*ContainerApplication, error) {
 		jww.ERROR.Printf("%#v\n", err)
 		return nil, err
 	}
+	nuleculeFile := new(bytes.Buffer)
+	r := bytes.NewReader(nuleculeOutputStream.Bytes())
 
-	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeOutputStream.String())
+	// what we downloaded is a tar, so lets get the real file!
+	tr := tar.NewReader(r)
+	tr.Next()
+	if err != nil && err != io.EOF {
+		jww.ERROR.Printf("the tar archive copied form the container seems to be broken: %s", err)
+	}
 
-	return nil, err
+	if _, err := io.Copy(nuleculeFile, tr); err != nil {
+		jww.ERROR.Printf("Can't copy the Nulecule file: %s", err)
+	}
+
+	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeFile)
+
+	app, err := Parse(nuleculeFile)
+
+	return app, err
+}
+
+func newClientFromEndpoint(endpoint DockerEndpoint) (*docker.Client, error) {
+	var client *docker.Client
+	var err error
+
+	if endpoint.Schema == "unix" {
+		client, err = docker.NewClient(endpoint.Schema + "://" + endpoint.Path)
+	} else if endpoint.Schema == "tcp" {
+
+	} else {
+		return nil, errors.New("invalid docker endpoint")
+	}
+
+	return client, err
 }
