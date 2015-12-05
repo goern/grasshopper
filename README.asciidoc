@@ -43,7 +43,7 @@ ADD /artifacts /grasshopping/artifacts
 
 To install your newly nuleculized application, simply call `atomic run myapp`.
 
-For a description of the lifecycle of a Nulecule, please refer to FIXME
+For a description of the lifecycle of a Nulecule, please refer to https://github.com/dustymabe/atomicapp/blob/4355d26576ac1297db1889277a4045f8d025bc4e/docs/atomicapp_lifecycle.md
 
 === Prerequisites
 
