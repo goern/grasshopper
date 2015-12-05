@@ -25,6 +25,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/fsouza/go-dockerclient"
@@ -52,9 +53,17 @@ func LoadNulecule(URL string) (*ContainerApplication, error) {
 
 	// load the Nulecule from the URL
 	app, err := getNuleculeFileFromDockerImage(URL)
+	if err != nil {
+		return nil, err
+	}
 
 	// figure out which graph components have a source attribute,
 	// follow them and LoadNulecule()
+	for _, component := range app.Graph {
+		if component.Source != "" {
+			jww.DEBUG.Printf("Graph Component %#v is an external Nulecule\n", component)
+		}
+	}
 
 	// merge loaded reference into parent ContainerApplication
 
@@ -129,10 +138,12 @@ func newClientFromEndpoint(endpoint DockerEndpoint) (*docker.Client, error) {
 	var client *docker.Client
 	var err error
 
-	if endpoint.Schema == "unix" {
+	if (os.Getenv("DOCKER_HOST") != "") &&
+		(os.Getenv("DOCKER_TLS_VERIFY") == "1") &&
+		(os.Getenv("DOCKER_CERT_PATH") != "") { // FIXME this seems to be a hack
+		client, err = docker.NewClientFromEnv()
+	} else if endpoint.Schema == "unix" {
 		client, err = docker.NewClient(endpoint.Schema + "://" + endpoint.Path)
-	} else if endpoint.Schema == "tcp" {
-
 	} else {
 		return nil, errors.New("invalid docker endpoint")
 	}
