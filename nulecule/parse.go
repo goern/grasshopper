@@ -64,11 +64,3 @@ func ParseFile(filename string) (*ContainerApplication, error) {
 
 	return Parse(f)
 }
-
-// FollowReference will follow a reference to external Nulecules and populate
-// the Nulecule app with the data read in.
-func FollowReference(URL string, app *ContainerApplication) error {
-	jww.DEBUG.Printf("following a reference to %s\n", URL)
-
-	return nil
-}
