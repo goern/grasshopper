@@ -23,11 +23,13 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/go-multierror"
+
+	jww "github.com/spf13/jwalterweatherman"
 )
 
 // Validate validates the Nulecule file
 func (nulecule *ContainerApplication) Validate() error {
-	var result error
+	var result *multierror.Error
 
 	// lets see if we are supposed to work on a 0.0.2 Nulecule
 	if nulecule.Specversion != "0.0.2" {
@@ -35,5 +37,12 @@ func (nulecule *ContainerApplication) Validate() error {
 			"'specversion' MUST be 0.0.2"))
 	}
 
-	return result
+	for _, component := range nulecule.Graph {
+		for provider, artifact := range component.Artifacts {
+			jww.DEBUG.Printf("Component %s, looking for Artifacts of %s Provider: %#v\n", component.Name, provider, artifact)
+		}
+
+	}
+
+	return result.ErrorOrNil()
 }

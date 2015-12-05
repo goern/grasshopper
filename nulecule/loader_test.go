@@ -20,19 +20,25 @@
 package nulecule
 
 import (
-	"errors"
+	"fmt"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/hashicorp/go-multierror"
 )
 
 func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 	assert := assert.New(t)
 
-	app, err := LoadNulecule("http://example.com/Nulecule")
+	url, _ := url.Parse("http://example.com/Nulecule")
+
+	app, err := LoadNulecule(url)
 
 	assert.NotNil(err)
-	assert.Equal(errors.New("Not a docker URL schema"), err)
+
+	assert.Equal(err.(*multierror.Error).Errors[0], fmt.Errorf("Not a docker URL schema"))
 	assert.Nil(app)
 
 }

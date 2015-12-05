@@ -21,13 +21,14 @@
 package cmd
 
 import (
-	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/goern/grasshopper/nulecule"
 	"github.com/spf13/cobra"
-	jww "github.com/spf13/jwalterweatherman"
 	"github.com/spf13/viper"
+
+	jww "github.com/spf13/jwalterweatherman"
 )
 
 var dockerSchema string
@@ -36,6 +37,7 @@ var dockerPort int
 var dockerPath string
 var dockerTLSVerify bool
 var dockerCertPath string
+var dockerRegistry string
 
 var fetchCmdV *cobra.Command
 
@@ -49,17 +51,21 @@ func FetchFunction(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	url, err := url.Parse(args[0])
+	if err != nil {
+		jww.ERROR.Printf("%s is not a valid URL\n", args[0])
+		return
+	}
+
 	// let's load the Nulecule of the application we want to deploy
 	// this will recursively load all Nulecule files and merge them
 	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
-	app, err := nulecule.LoadNulecule(args[0])
+	_, err = nulecule.LoadNulecule(url) // TODO
 
 	if err != nil {
 		jww.ERROR.Printf("Can't load Nulecule from %s\n", args[0])
 		return
 	}
-
-	fmt.Println(app)
 }
 
 //FetchCmd returns an initialized CLI fetch command
@@ -76,6 +82,7 @@ func init() {
 	FetchCmd.PersistentFlags().StringVar(&dockerHost, "docker-host", "localhost", "This is the host running the docker endpoint")
 	FetchCmd.PersistentFlags().BoolVar(&dockerTLSVerify, "docker-tls-verify", false, "perform TLS certificate verification on connect")
 	FetchCmd.PersistentFlags().StringVar(&dockerCertPath, "docker-cert-path", "/etc/docker/certs", "X.509 certificate path to be used during TLS certificate verification")
+	FetchCmd.PersistentFlags().StringVar(&dockerRegistry, "docker-registrz", "registry.docker.com", "the registry to fetch Nulecules from")
 
 	// default settings
 	viper.SetDefault("dockerHost", "localhost")
@@ -83,6 +90,7 @@ func init() {
 	viper.SetDefault("dockerSchema", "unix")
 	viper.SetDefault("dockerCertPath", "/etc/docker/certs")
 	viper.SetDefault("dockerTLSVerify", false)
+	viper.SetDefault("dockerRegistry", "registry.docker.com")
 
 	// bind config to command flags
 	if FetchCmd.PersistentFlags().Lookup("docker-host").Changed {
