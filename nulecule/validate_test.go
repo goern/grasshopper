@@ -20,8 +20,10 @@
 package nulecule
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,10 +31,7 @@ func TestValidate(t *testing.T) {
 	assert := assert.New(t)
 
 	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
-
-	if parseError != nil {
-		t.Log(parseError)
-	}
+	assert.Nil(parseError)
 
 	if assert.NotNil(containerApplication) {
 		assert.Equal(NuleculeVersion, containerApplication.Specversion, "Nulecule Spec Version should be 0.0.2")
@@ -44,13 +43,17 @@ func TestValidate(t *testing.T) {
 		}
 	}
 
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule")
+}
 
-	if parseError != nil {
-		t.Log(parseError)
-	}
+func TestInvalideNulecule(t *testing.T) {
+	assert := assert.New(t)
 
-	if assert.NotNil(containerApplicationBroken) {
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
+	assert.Nil(parseError)
+	assert.NotNil(containerApplication)
 
-	}
+	containerApplication.Specversion = "1.2.3"
+	err := containerApplication.Validate()
+	assert.NotNil(err)
+	assert.Equal(err.(*multierror.Error).Errors[0], fmt.Errorf("'specversion' MUST be 0.0.2"))
 }
