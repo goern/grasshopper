@@ -16,6 +16,10 @@
 			"Rev": "71acacd42f85e5e82f70a55327789582a5200a90"
 		},
 		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Rev": "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d"
+		},
+		{
 			"ImportPath": "github.com/docker/docker/builder/dockerfile/command",
 			"Comment": "v1.4.1-7035-ge92a735",
 			"Rev": "e92a735d7016ec79d0b0a91c0f003b2de2dabf9f"
@@ -24,6 +28,10 @@
 			"ImportPath": "github.com/docker/docker/builder/dockerfile/parser",
 			"Comment": "v1.4.1-7035-ge92a735",
 			"Rev": "e92a735d7016ec79d0b0a91c0f003b2de2dabf9f"
+		},
+		{
+			"ImportPath": "github.com/fsouza/go-dockerclient",
+			"Rev": "dc4295a98977ab5b1983051bc169b784c4b423df"
 		},
 		{
 			"ImportPath": "github.com/hashicorp/errwrap",
@@ -59,6 +67,10 @@
 			"ImportPath": "github.com/russross/blackfriday",
 			"Comment": "v1.3-25-g660c9fd",
 			"Rev": "660c9fd283952bff5f651d5b598de779fc9e1bfc"
+		},
+		{
+			"ImportPath": "github.com/satori/go.uuid",
+			"Rev": "d41af8bb6a7704f00bc3b7cba9355ae6a5a80048"
 		},
 		{
 			"ImportPath": "github.com/shurcooL/sanitized_anchor_name",
