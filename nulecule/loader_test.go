@@ -34,7 +34,7 @@ func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 
 	url, _ := url.Parse("http://example.com/Nulecule")
 
-	app, err := LoadNulecule(url)
+	app, err := LoadNulecule(&DefaultLoaderOptions, url)
 
 	assert.NotNil(err)
 

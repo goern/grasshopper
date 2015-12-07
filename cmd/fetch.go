@@ -34,67 +34,69 @@ import (
 var dockerSchema string
 var dockerHost string
 var dockerPort int
-var dockerPath string
+var dockerSocketPath string
 var dockerTLSVerify bool
 var dockerCertPath string
 var dockerRegistry string
-
-var fetchCmdV *cobra.Command
-
-//FetchFunction is the function that downloads all Nulecule container images
-func FetchFunction(cmd *cobra.Command, args []string) {
-	InitializeConfig()
-
-	if len(args) < 1 {
-		cmd.Usage()
-		jww.FATAL.Println("URL to be fetched is missing")
-		return
-	}
-
-	url, err := url.Parse(args[0])
-	if err != nil {
-		jww.ERROR.Printf("%s is not a valid URL\n", args[0])
-		return
-	}
-
-	// let's load the Nulecule of the application we want to deploy
-	// this will recursively load all Nulecule files and merge them
-	jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
-	_, err = nulecule.LoadNulecule(url) // TODO
-
-	if err != nil {
-		jww.ERROR.Printf("Can't load Nulecule from %s\n", args[0])
-		return
-	}
-}
 
 //FetchCmd returns an initialized CLI fetch command
 var FetchCmd = &cobra.Command{
 	Use:   "fetch URL",
 	Short: "Download application from URL",
-	Long:  `Will download an application from a URL and combine artifacts from the target application and any dependent applications.`,
-	Run:   FetchFunction,
+	Long:  `fetch will download an application from a URL and combine all components from the that application and any dependent applications.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 1 {
+			cmd.Usage()
+			jww.FATAL.Println("URL to be fetched is missing")
+			return
+		}
+
+		if err := InitializeConfig(); err != nil {
+			return
+		}
+
+		url, err := url.Parse(args[0])
+		if err != nil {
+			jww.ERROR.Printf("%s is not a valid URL\n", args[0])
+			return
+		}
+
+		// let's load the Nulecule of the application we want to deploy
+		// this will recursively load all Nulecule files and merge them
+		jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
+
+		var dockerEndpoint = nulecule.DockerEndpoint{"unix", "", 0, "/var/run/docker.sock"}
+		var loaderConfig = nulecule.LoaderOptions{viper.GetString("docker-registry"), &dockerEndpoint}
+
+		jww.DEBUG.Printf("Nulecule Loader Options: %#v", loaderConfig)
+		jww.DEBUG.Printf("Nulecule Loader Options: Endpoint: %#v", loaderConfig.Endpoint)
+
+		_, err = nulecule.LoadNulecule(&loaderConfig, url)
+
+		if err != nil {
+			jww.ERROR.Printf("Can't load Nulecule from %s\n", args[0])
+			return
+		}
+	},
 }
 
 func init() {
-	GrasshopperCmd.AddCommand(FetchCmd)
+	FetchCmd.Flags().StringVar(&dockerHost, "docker-host", "localhost", "This is the host running the docker endpoint")
+	FetchCmd.Flags().BoolVar(&dockerTLSVerify, "docker-tls-verify", false, "perform TLS certificate verification on connect")
+	FetchCmd.Flags().StringVar(&dockerCertPath, "docker-cert-path", "/etc/docker/certs", "X.509 certificate path to be used during TLS certificate verification")
+	FetchCmd.Flags().StringVar(&dockerRegistry, "docker-registry", "registry.docker.com", "the registry to fetch Nulecules from")
 
-	FetchCmd.PersistentFlags().StringVar(&dockerHost, "docker-host", "localhost", "This is the host running the docker endpoint")
-	FetchCmd.PersistentFlags().BoolVar(&dockerTLSVerify, "docker-tls-verify", false, "perform TLS certificate verification on connect")
-	FetchCmd.PersistentFlags().StringVar(&dockerCertPath, "docker-cert-path", "/etc/docker/certs", "X.509 certificate path to be used during TLS certificate verification")
-	FetchCmd.PersistentFlags().StringVar(&dockerRegistry, "docker-registrz", "registry.docker.com", "the registry to fetch Nulecules from")
+	viper.BindPFlag("docker-host", FetchCmd.Flags().Lookup("docker-host"))
+	viper.BindPFlag("docker-tls-verify", FetchCmd.Flags().Lookup("docker-tls-verify"))
+	viper.BindPFlag("docker-cert-path", FetchCmd.Flags().Lookup("docker-cert-path"))
+	viper.BindPFlag("docker-registry", FetchCmd.Flags().Lookup("docker-registry"))
 
 	// default settings
 	viper.SetDefault("dockerHost", "localhost")
-	viper.SetDefault("dockerPath", "/var/run/docker.sock")
+	viper.SetDefault("dockerSocketPath", "/var/run/docker.sock")
 	viper.SetDefault("dockerSchema", "unix")
 	viper.SetDefault("dockerCertPath", "/etc/docker/certs")
 	viper.SetDefault("dockerTLSVerify", false)
 	viper.SetDefault("dockerRegistry", "registry.docker.com")
-
-	// bind config to command flags
-	if FetchCmd.PersistentFlags().Lookup("docker-host").Changed {
-		viper.Set("dockerHost", Verbose)
-	}
 
 }

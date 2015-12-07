@@ -34,7 +34,6 @@ import (
 	"github.com/satori/go.uuid"
 
 	jww "github.com/spf13/jwalterweatherman"
-	"github.com/spf13/viper"
 )
 
 //DockerEndpoint will hold the runtime configuration
@@ -47,10 +46,19 @@ type DockerEndpoint struct {
 
 var dockerEndpoint = DockerEndpoint{"unix", "", 0, "/var/run/docker.sock"}
 
+//LoaderOptions are used to configure the Nulecule Loader
+type LoaderOptions struct {
+	Registry string          // the docer registry to be used
+	Endpoint *DockerEndpoint // the docker daemon itself
+}
+
+//DefaultLoaderOptions is a default configuration for the Nulecule Loader
+var DefaultLoaderOptions = LoaderOptions{"registry.docker.com", &dockerEndpoint}
+
 //LoadNulecule will load a Nulecule from a URL and follow all references
 // to 'external' graph components aka other Nulecules.
 // It will return a fully populated ContainerApplication struct
-func LoadNulecule(url *url.URL) (*ContainerApplication, error) {
+func LoadNulecule(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
 	var errors *multierror.Error
 
 	if url.Scheme != "docker" {
@@ -61,7 +69,7 @@ func LoadNulecule(url *url.URL) (*ContainerApplication, error) {
 	}
 
 	// load the Nulecule from the URL
-	app, err := getNuleculeFileFromDockerImage(url)
+	app, err := getNuleculeFileFromDockerImage(options, url)
 	if err != nil {
 		errors = multierror.Append(errors, err)
 
@@ -85,7 +93,7 @@ func LoadNulecule(url *url.URL) (*ContainerApplication, error) {
 			componentURL, err := url.Parse(component.Source)
 			// FIXME(goern) chk the err
 
-			externalApp, err := getNuleculeFileFromDockerImage(componentURL)
+			externalApp, err := getNuleculeFileFromDockerImage(options, componentURL)
 			if err != nil {
 				errors = multierror.Append(errors, err)
 
@@ -111,13 +119,13 @@ func LoadNulecule(url *url.URL) (*ContainerApplication, error) {
 
 //getNuleculeFileFromDockerImage will extract and return an unvalidated
 // ContainerApplication (Nulecule file)
-func getNuleculeFileFromDockerImage(url *url.URL) (*ContainerApplication, error) {
+func getNuleculeFileFromDockerImage(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
 	var pullImageOutputStream bytes.Buffer
 	var nuleculeOutputStream bytes.Buffer
 	var dockerImageName string
-	var dockerRegistry = viper.GetString("dockerRegistry")
+	var dockerRegistry = options.Registry
 
-	client, err := newClientFromEndpoint(&dockerEndpoint)
+	client, err := newClientFromEndpoint(options.Endpoint)
 
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
@@ -185,12 +193,12 @@ func getNuleculeFileFromDockerImage(url *url.URL) (*ContainerApplication, error)
 
 //getArtifactsFromDockerImage will get all artifact files for all providers
 // and return them as a tar archive
-func getArtifactsFromDockerImage(URL string) (*bytes.Buffer, error) {
+func getArtifactsFromDockerImage(options *LoaderOptions, URL string) (*bytes.Buffer, error) {
 	splitURL := strings.Split(URL, "/")
 	var artifactsOutputStream bytes.Buffer
 	var errors *multierror.Error
 
-	client, err := newClientFromEndpoint(&dockerEndpoint)
+	client, err := newClientFromEndpoint(options.Endpoint)
 
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
@@ -230,6 +238,7 @@ func newClientFromEndpoint(endpoint *DockerEndpoint) (*docker.Client, error) {
 		endpoint = &dockerEndpoint
 	}
 
+	// TODO refactor this out into the LoaderOptions.Endpoint
 	if (os.Getenv("DOCKER_HOST") != "") &&
 		(os.Getenv("DOCKER_TLS_VERIFY") == "1") &&
 		(os.Getenv("DOCKER_CERT_PATH") != "") { // FIXME this seems to be a hack
