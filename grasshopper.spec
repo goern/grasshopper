@@ -1,5 +1,5 @@
 Name:           grasshopper
-Version:        0.2.0
+Version:        0.3.0
 Release:        1%{?dist}
 Summary:        This will make a Nulecule GO!
 
@@ -58,6 +58,24 @@ cp -a grasshopper.8 %{buildroot}/%{_mandir}/man8/
 %doc %{_mandir}/man8/grasshopper.8*
 
 %changelog
+* Mon Dec 07 2015 Christoph Görn <goern@redhat.com> 0.3.0-1
+- updated dependencies (goern@redhat.com)
+- add a dump to string for ContainerApplication (goern@b4mad.net)
+- I refactored lots of the command line parsing so, hope it is a little clearer
+  now. In addition to that, the fetch command now has LoaderOptions which is
+  used to configure the loader at runtime. (goern@b4mad.net)
+- add validation of Nulecule file, started validation of artifacts, 
+  recursively fetch all graph components and validate them, use url.URL
+  instead of a string when naming a docker image, even though we just support
+  docker:// scheme by now (goern@b4mad.net)
+- removed FollowReference() as this will be handled by the loader (goern@b4mad.net)
+- Grasshopper now checks if DOCKER_HOST, DOCKER_TLS_VERIFY, DOCKER_CERT_PATH is
+  set, if so, it will connect to the remote docker daemon, if these are not
+  set, than Grasshopper will use /var/run/docker.sock to talk to the local
+  dockah daemon (goern@b4mad.net)
+- add show license command and reenabled fetch command (goern@redhat.com)
+- add parameter guessing, there will be no constraints by now (goern@b4mad.net)
+
 * Tue Dec 01 2015 Christoph Görn <goern@redhat.com> 0.1.0-1
 - fix inherited artifacts, closed #3 (goern@redhat.com)
 - First demo of a `grasshopper nulecule guess` demo (goern@redhat.com)
