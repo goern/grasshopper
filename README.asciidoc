@@ -33,11 +33,12 @@ End-users typically do not install the software from source. Instead use the Gra
 line in your Dockerfile and package your application on top. For example:
 
 ```
-FROM goern/grasshopper:0.2.0
+FROM goern/grasshopper:0.3.0-pre
 
 MAINTAINER Your Name <you@example.com>
 
-ADD /Nulecule /Dockerfile README.md /grasshopping/
+ADD /Nulecule /application-entity/
+ADD /Dockerfile README.asciidoc /
 ADD /artifacts /grasshopping/artifacts
 ```
 
