@@ -35,15 +35,21 @@ var GrasshopperCmd = &cobra.Command{
 	Use:   "grasshopper",
 	Short: "make a Nulecule GO!",
 	Long:  `Grasshopper is a GOlang implementation of the Nulecule Specification.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println(`Grasshopper  Copyright (C) 2015  Christoph Görn
 This program comes with ABSOLUTELY NO WARRANTY; for details use 'grasshopper --help'.
 This is free software, and you are welcome to redistribute it
 under certain conditions; use 'grasshopper show license' for details.`)
 
-		InitializeConfig()
+		if err := InitializeConfig(); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
+
+var grasshopperCmdV *cobra.Command
 
 //NuleculeCmd is Grasshopper's Nulecule sub-command.
 var NuleculeCmd = &cobra.Command{
@@ -51,7 +57,6 @@ var NuleculeCmd = &cobra.Command{
 	Short: "do the nulecule",
 	Long:  `Work with a Nulecule.`,
 }
-var grasshopperCmdV *cobra.Command
 
 //versionCmd will simply print the version string of Grasshopper
 var versionCmd = &cobra.Command{
@@ -83,8 +88,8 @@ var Quiet bool
 //DryRun will pretend to do something, but really really doesnt do anything
 var DryRun bool
 
-//DoLog will write to a temporary logfile
-var DoLog bool
+//Log will write to a logfile
+var Log bool
 
 //Experimental will enable experimental output
 var Experimental bool
@@ -94,14 +99,12 @@ var minversion string // set by -X via Makefile
 
 //Execute adds all child commands to the root command GrasshopperCmd and sets flags appropriately.
 func Execute() {
-	jww.SetStdoutThreshold(jww.LevelInfo)
-
 	GrasshopperCmd.SuggestionsMinimumDistance = 1
 
 	//add child commands to the root command.
 	GrasshopperCmd.AddCommand(versionCmd)
 
-	GrasshopperCmd.AddCommand(bashAutogenerateCmd)
+	// GrasshopperCmd.AddCommand(bashAutogenerateCmd)
 
 	// add nulecule and it's sub-commands
 	NuleculeCmd.AddCommand(IndexCmd)
@@ -115,26 +118,6 @@ func Execute() {
 	// GrasshopperCmd.AddCommand(UninstallCmd)
 	// GrasshopperCmd.AddCommand(CleanCmd)
 
-	/* FIXME this is nice, but we need a better one!
-	manHeader := &cobra.GenManHeader{
-		Title:   "grasshopper",
-		Section: "1",
-	}
-	out := new(bytes.Buffer)
-	GrasshopperCmd.GenMan(manHeader, out)
-	fmt.Println(out.String())
-	*/
-
-	/* FIxME this is nice, but we need a better one!
-	manHeader := &cobra.GenManHeader{
-		Title:   "grasshopper",
-		Section: "1",
-	}
-	out := new(bytes.Buffer)
-	GrasshopperCmd.GenMan(manHeader, out)
-	fmt.Println(out.String())
-	*/
-
 	if err := GrasshopperCmd.Execute(); err != nil {
 		// the err is already logged by Cobra
 		os.Exit(-1)
@@ -142,62 +125,63 @@ func Execute() {
 
 }
 
-// InitializeConfig initializes a config file with sensible default configuration flags.
-func InitializeConfig() {
+func init() {
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Quiet, "quiet", "q", false, "quiet output")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Log, "log", "l", true, "write logging output to file")
+	GrasshopperCmd.PersistentFlags().BoolVarP(&Experimental, "experimental", "x", true, "write experimental output to stdout")
+
+	grasshopperCmdV = GrasshopperCmd
+
+	viper.BindPFlag("verbose", GrasshopperCmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag("quiet", GrasshopperCmd.PersistentFlags().Lookup("quiet"))
+	viper.BindPFlag("log", GrasshopperCmd.PersistentFlags().Lookup("log"))
+	viper.BindPFlag("experimental", GrasshopperCmd.PersistentFlags().Lookup("experimental"))
+
+	if Log {
+		jww.SetLogFile("grasshopper.log")
+	}
+
 	if Quiet {
 		jww.SetStdoutThreshold(jww.LevelWarn)
-	}
-
-	viper.SetConfigName("grasshopper")          // name of config file (without extension)
-	viper.AddConfigPath("/etc/grasshopper.d/")  // path to look for the config file
-	viper.AddConfigPath("$HOME/.grasshopper.d") // call multiple times to add many search paths
-	viper.AddConfigPath(".")                    // optionally look for config in the working directory
-
-	// read config from storage
-	err := viper.ReadInConfig() // FIXME
-	if err != nil {
-		jww.WARN.Println("Unable to locate Config file. I will fall back to my defaults...")
-	}
-
-	// default settings
-	viper.SetDefault("Verbose", false)
-	viper.SetDefault("Quiet", false)
-	viper.SetDefault("DryRun", false)
-	viper.SetDefault("DoLog", true)
-	viper.SetDefault("Experimental", true)
-
-	// bind config to command flags
-	if grasshopperCmdV.PersistentFlags().Lookup("verbose").Changed {
-		viper.Set("Verbose", Verbose)
-	}
-	if grasshopperCmdV.PersistentFlags().Lookup("quiet").Changed {
-		viper.Set("Quiet", Quiet)
-	}
-	if grasshopperCmdV.PersistentFlags().Lookup("log").Changed {
-		viper.Set("DoLog", DoLog)
-	}
-	if grasshopperCmdV.PersistentFlags().Lookup("experimental").Changed {
-		viper.Set("Experimental", Experimental)
-	}
-
-	if DoLog {
-		jww.SetLogFile("grasshopper.log")
 	}
 
 	if Verbose {
 		jww.SetLogThreshold(jww.LevelTrace)
 		jww.SetStdoutThreshold(jww.LevelTrace)
 	}
+
 }
 
-//Initializes flags
-func init() {
-	GrasshopperCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
-	GrasshopperCmd.PersistentFlags().BoolVarP(&Quiet, "quiet", "q", false, "quiet output")
-	GrasshopperCmd.PersistentFlags().BoolVarP(&DoLog, "log", "l", true, "write logging output to file")
-	GrasshopperCmd.PersistentFlags().BoolVarP(&Experimental, "experimental", "x", true, "write experimental output to stdout")
+// InitializeConfig reads in config file and ENV variables if set.
+func InitializeConfig(subCmdVs ...*cobra.Command) error {
+	viper.SetConfigType("json")
+	viper.SetConfigName("grasshopper") // name of config file (without extension)
+	//	viper.AddConfigPath("/etc/grasshopper.d/")  // path to look for the config file
+	//	viper.AddConfigPath("$HOME/.grasshopper.d") // call multiple times to add many search paths
+	viper.AddConfigPath(".") // optionally look for config in the working directory
 
-	grasshopperCmdV = GrasshopperCmd
+	// read config from storage
+	err := viper.ReadInConfig()
+	if err != nil {
+		jww.WARN.Printf("Unable to read Config file. %#v I will fall back to my defaults...", err)
+		err = nil // we just skip this error
+	}
 
-	FetchCmd.Flags().BoolVarP(&DryRun, "dry-run", "y", false, "dry run the fetch operation")
+	// set some sane defaults
+	viper.SetDefault("Verbose", false)
+	viper.SetDefault("Quiet", false)
+	viper.SetDefault("Log", true)
+	viper.SetDefault("Experimental", true)
+
+	if grasshopperCmdV.PersistentFlags().Lookup("verbose").Changed {
+		viper.Set("Verbose", Verbose)
+	}
+
+	if viper.GetBool("verbose") {
+		jww.SetStdoutThreshold(jww.LevelTrace)
+		jww.SetLogThreshold(jww.LevelTrace)
+	}
+
+	return err
 }

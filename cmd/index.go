@@ -32,6 +32,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
+
 	jww "github.com/spf13/jwalterweatherman"
 
 	"github.com/goern/grasshopper/nulecule"
@@ -43,87 +44,105 @@ func init() {
 
 }
 
-//IndexCommand will interact with the Nulecule Library on github
+//IndexCmd will interact with the Nulecule Library on github
 var IndexCmd = &cobra.Command{
 	Use:   "index",
 	Short: "list index of applications or get info on one application",
 	Long: `list all Nulecules or the details of one Nulecule on the Nulecule Library
 
 index requires a subcommand, e.g. ` + "`grasshopper nulecule index list`.",
-	Run: printIndexList,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := InitializeConfig(); err != nil {
+			return err
+		}
+
+		return printIndexList(args)
+	},
 }
 
 var indexListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all applications",
 	Long:  `List all applications in the Nulecule Library Index.`,
-	Run:   printIndexList,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := InitializeConfig(); err != nil {
+			return err
+		}
+
+		return printIndexList(args)
+	},
 }
 
 var indexInfoCmd = &cobra.Command{
 	Use:   "info APPNAME",
 	Short: "show info of APPNAME",
 	Long:  `Show detailed info of APPNAME in the Nulecule Library Index.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		InitializeConfig()
-
-		if Verbose {
-			jww.SetLogThreshold(jww.LevelTrace)
-			jww.SetStdoutThreshold(jww.LevelInfo)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := InitializeConfig(); err != nil {
+			return err
 		}
 
-		if len(args) < 1 {
-			cmd.Usage()
-			jww.FATAL.Println("APPNAME is required")
+		return printIndexInfo(args)
+	},
+}
+
+func printIndexInfo(args []string) error {
+	if len(args) < 1 {
+		// FIXME		cmd.Usage()
+		jww.FATAL.Println("APPNAME is required")
+		return fmt.Errorf("APPNAME is required")
+	}
+
+	nuleculeLibraryIndexZip, err := getNuleculeLibraryIndexfromGithubAsZIP()
+	if err != nil {
+		jww.FATAL.Println(err)
+		return err
+	}
+
+	// set up a new tabwriter
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 26, 8, 2, '\t', 0)
+
+	// and print some output to the tabwriter
+	fmt.Fprintln(w, "This is the Nulecule Library Index")
+	fmt.Fprintln(w, "Application Name\tAppID\tVersion")
+
+	// iterate through the files in the archive
+	for _, item := range nuleculeLibraryIndexZip.File {
+		if item.FileInfo().IsDir() {
+			continue
 		}
 
-		nuleculeLibraryIndexZip, err := getNuleculeLibraryIndexfromGithubAsZIP()
-		if err != nil {
-			jww.FATAL.Println(err)
-			return
-		}
+		// if the file is a Nulecule, get it!
+		if item.FileInfo().Name() == "Nulecule" {
+			jww.DEBUG.Printf("Found a Nulecule, size of it's description is %d\n", item.FileInfo().Size())
 
-		w := new(tabwriter.Writer)
-		w.Init(os.Stdout, 26, 8, 2, '\t', 0)
+			rc, err := item.Open()
+			if err != nil {
+				jww.FATAL.Println(err)
+				return err
+			}
+			defer rc.Close()
 
-		fmt.Fprintln(w, "This is the Nulecule Library Index")
-		fmt.Fprintln(w, "Application Name\tAppID\tVersion")
+			// get the Nulecules content
+			nuci, parseError := nulecule.Parse(rc)
 
-		// Iterate through the files in the archive
-		for _, item := range nuleculeLibraryIndexZip.File {
-			if item.FileInfo().IsDir() {
+			if parseError != nil { // TODO this is a multierror thingy
+				jww.INFO.Println(parseError, " This may be due to unsupported (by Grasshopper) artifact inheritance.")
 				continue
 			}
 
-			// if the file is a Nulecule, getit!
-			if item.FileInfo().Name() == "Nulecule" {
-				jww.DEBUG.Printf("Found a Nulecule, size of it's description is %d\n", item.FileInfo().Size())
+			// FIXME this needs to ignore case etc.
+			if (nuci.Metadata.Name == args[0]) || (nuci.AppID == args[0]) {
+				fmt.Fprintf(w, "%s\t%s\t%s\n", nuci.Metadata.Name, nuci.AppID, nuci.Metadata.AppVersion)
 
-				rc, err := item.Open()
-				if err != nil {
-					jww.FATAL.Println(err)
-					return
-				}
-				defer rc.Close()
-
-				// get the Nulecules content
-				nuci, parseError := nulecule.Parse(rc)
-
-				if parseError != nil {
-					jww.INFO.Println(parseError, " This may be due to unsupported (by Grasshopper) artifact inheritance.")
-					continue
-				}
-
-				// FIXME this needs to ignore case etc.
-				if (nuci.Metadata.Name == args[0]) || (nuci.AppID == args[0]) {
-					fmt.Fprintf(w, "%s\t%s\t%s\n", nuci.Metadata.Name, nuci.AppID, nuci.Metadata.AppVersion)
-
-				}
 			}
-
-			w.Flush()
 		}
-	},
+
+		w.Flush()
+	}
+
+	return nil
 }
 
 func getNuleculeLibraryIndexfromGithubAsZIP() (*zip.Reader, error) {
@@ -150,18 +169,15 @@ func getNuleculeLibraryIndexfromGithubAsZIP() (*zip.Reader, error) {
 	return zip.NewReader(r, int64(r.Len()))
 }
 
-func printIndexList(cmd *cobra.Command, args []string) {
-	InitializeConfig()
-
-	if Verbose {
-		jww.SetLogThreshold(jww.LevelTrace)
-		jww.SetStdoutThreshold(jww.LevelInfo)
+func printIndexList(args []string) error {
+	if err := InitializeConfig(); err != nil {
+		return err
 	}
 
 	nuleculeLibraryIndexZip, err := getNuleculeLibraryIndexfromGithubAsZIP()
 	if err != nil {
 		jww.FATAL.Println(err)
-		return
+		return err
 	}
 
 	w := new(tabwriter.Writer)
@@ -183,7 +199,7 @@ func printIndexList(cmd *cobra.Command, args []string) {
 			rc, err := item.Open()
 			if err != nil {
 				jww.FATAL.Println(err)
-				return
+				return err
 			}
 			defer rc.Close()
 
@@ -200,4 +216,6 @@ func printIndexList(cmd *cobra.Command, args []string) {
 
 		w.Flush()
 	}
+
+	return nil
 }

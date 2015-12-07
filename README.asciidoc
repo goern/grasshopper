@@ -28,22 +28,36 @@ image::docs/images/grasshopper.png[]
 
 == Getting Started
 
-Grasshopper is packaged as a container. End-users typically do not install
-the software from source. Instead use the Grasshopper container as the `FROM`
+Grasshopper is packaged as a container or as a RPM via https://copr.fedoraproject.org/coprs/goern/grasshopper/[copr].
+End-users typically do not install the software from source. Instead use the Grasshopper container as the `FROM`
 line in your Dockerfile and package your application on top. For example:
 
 ```
-FROM goern/grasshopper:0.2.0
+FROM goern/grasshopper:0.3.0-pre
 
 MAINTAINER Your Name <you@example.com>
 
-ADD /Nulecule /Dockerfile README.md /grasshopping/
+ADD /Nulecule /application-entity/
+ADD /Dockerfile README.asciidoc /
 ADD /artifacts /grasshopping/artifacts
 ```
 
 To install your newly nuleculized application, simply call `atomic run myapp`.
 
-For a description of the lifecycle of a Nulecule, please refer to FIXME
+For a description of the lifecycle of a Nulecule, please refer to https://github.com/dustymabe/atomicapp/blob/4355d26576ac1297db1889277a4045f8d025bc4e/docs/atomicapp_lifecycle.md
+
+=== Prerequisites
+
+Nulecules (aka "A Composite Container-based Application") are transferred as docker container images,
+therefore Grasshopper needs to talk to a docker daemon (which in fact will pull the image) to fetch
+docker container images.
+
+On a Mac you should install http://docs.docker.com/mac/started/[Docker Toolbox], using the quick start terminal
+a few environment variables will be set (DOCKER_HOST, DOCKER_TLS_VERIFY, DOCKER_CERT_PATH).
+
+On a Fedora/CentOS/Red Hat Enterprise Linux host, Grasshopper will talk to the local docker daemon
+via `/var/run/docker.sock` or, if a few environment variables are set (DOCKER_HOST, DOCKER_TLS_VERIFY,
+DOCKER_CERT_PATH) Grasshopper will talk to the remote docker daemon.
 
 == Developers
 
@@ -63,11 +77,13 @@ SPEC file is provided.
 WARNING: Nevertheless a source RPM is provided containing all the source from
 github, the rpm build process itself is using `go get` to get the source.
 
-### Test
+=== Test
 
 There is a Makefile target called `test`, which will run all the GO tests. We aim
 to keep the test coverage over 75%.
 
+
+==
 
 == Providers
 

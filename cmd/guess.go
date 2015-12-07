@@ -34,7 +34,9 @@ var GuessCmd = &cobra.Command{
 	Short: "guess something from a DOCKERFILE",
 	Long:  "Guess some information from a Dockerfile that can be handy in a Nulecule.",
 	Run: func(cmd *cobra.Command, args []string) {
-		InitializeConfig()
+		if err := InitializeConfig(); err != nil {
+			return
+		}
 
 		// figure out if a Dockerfile was provided
 		if len(args) < 1 {

@@ -33,8 +33,6 @@ var InstallCmd = &cobra.Command{
 	Short: "install application",
 	Long:  "Peform actions to prepare application APPNAME to be run.",
 	Run: func(cmd *cobra.Command, args []string) {
-		InitializeConfig()
-
 		if len(args) < 1 {
 			cmd.Usage()
 			jww.FATAL.Println("path URL to be fetched")

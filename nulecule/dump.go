@@ -17,17 +17,18 @@
  along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
 */
 
-//Package utils includes all the we need for the grasshopper
-package utils
+package nulecule
 
-import "github.com/fsouza/go-dockerclient"
+import "github.com/davecgh/go-spew/spew"
 
-//PullDockerImage will pull a Docker image and
-func PullDockerImage(name string) bool {
-	client, _ := docker.NewClientFromEnv()
+//Dump will write a ContainerApplication to STDOUT, if includeExternalNulecules is true
+//it will include all external graph components too.
+func (app ContainerApplication) Dump(includeExternalNulecules bool) string {
+	if includeExternalNulecules {
+		return spew.Sdump(app)
+	} else {
+		// TODO
+	}
 
-	client.PullImage(docker.PullImageOptions{"docker.io", "goern", "grasshopper", nil, false},
-		docker.AuthConfiguration{})
-
-	return true
+	return ""
 }

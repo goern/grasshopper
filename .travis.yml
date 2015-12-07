@@ -14,7 +14,9 @@ install:
 - go get gopkg.in/yaml.v2
 - go get github.com/goern/grasshopper
 script:
-- go test -v -covermode=count -coverprofile=profile.cov github.com/goern/grasshopper/nulecule
-- go test -v -covermode=count -coverprofile=profile.cov github.com/goern/grasshopper/nulecule/utils
+- scripts/coverage --coveralls
 after_success:
 - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
+notifications:
+  slack:
+    secure: HnbQ04ULNr3d3ighB3bRSxFW2Xcjm6PbBzXOzJSBebN5mUDul4GJlmpfT0PJvjfunJ03rGrjAEidc40tzKcxLAan0w+kyJyO5VzGEle1w/me3GeGsv1rbSnq195pcDPElek1qMmzGUBly4B5mGtzwnlk+vRJwkQ1t2eCXddM3DwTHTISTBYZx+ihGTl8l6v/Yhajrqv5dQigpXkQ4oE/JENi/hrqs1oA/IZ4VYufm7fgUMMTgloYaL/NAlA1DAfn9+osD+xOkqcWQ0sxM6+lYSzuZr+IZKu9XdtDy5c/3h1IMew8VIx/Va+sB5RH6fqbahD0XtxQG4HJykqJnLtdV2Uvz3fSgq2s0T5V8//veLyZkrLRn77coKocKXwjPPJGiK7m+S1PsDhQzeNbVSJ2EaWfNKqjSCo+nps+JByVoSs5XZ0Dx6XIzhdWaJIcVglPQbqLhav0UAaM+2J7qdKrvh2LhfAzOBOGdkZC+zrPMcNOhQWMSAKsBYYHpWbGW9bOiORasDY/Qmn/XTMvmgJ5cdikNslreCHgpEXaNgB5wwdegGWAM+Gfr7MuTObTBnMhIx84VbOSwK0PKUDg9KW41ZTIZWaIpKjPkLcO4QMFFS/L97levWOIsk2G8FsTYE7eiih6M4nnoRGRCowhha50fk3+zxsVzo7Y1J/JCpDZ7Zs=

@@ -30,11 +30,7 @@ func TestParseFile(t *testing.T) {
 
 	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 
-	if parseError != nil {
-		t.Log(parseError)
-		// FIXME this should panic!
-	}
-
+	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
 }
 
@@ -43,12 +39,7 @@ func TestParseFileWithInherits(t *testing.T) {
 
 	containerApplication, parseError := ParseFile("../test-fixtures/with-inherits")
 
-	if parseError != nil {
-		t.Log(parseError)
-		// FIXME this should panic!
-
-	}
-
+	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
 }
 
@@ -57,13 +48,14 @@ func TestParseFileWithConstraints(t *testing.T) {
 
 	containerApplication, parseError := ParseFile("../test-fixtures/with-constraints")
 
-	if parseError != nil {
-		t.Log(parseError)
-		// FIXME this should panic!
-
-	}
-
+	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
+}
 
-	//	t.Log(string(containerApplication))
+func TestParseFileBorkenNulecule(t *testing.T) {
+	assert := assert.New(t)
+
+	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.borken")
+	assert.NotNil(parseError)
+	assert.Nil(containerApplicationBroken)
 }
