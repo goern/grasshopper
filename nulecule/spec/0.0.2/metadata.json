@@ -21,7 +21,7 @@
             "default": "null"
         },
         "license": {
-            "$ref": "file:license.json"
+            "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/license.json"
         }
     }
 }

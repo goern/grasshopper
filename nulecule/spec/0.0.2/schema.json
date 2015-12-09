@@ -17,13 +17,13 @@
             "default": "0.0.2"
         },
         "metadata": {
-            "$ref": "file:metadata.json"
+            "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/metadata.json"
         },
         "graph": {
-            "$ref": "file:graph.json"
+            "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/graph.json"
         },
         "requirements": {
-            "$ref": "file:requirement.json"
+            "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/requirement.json"
         }
     }
 }

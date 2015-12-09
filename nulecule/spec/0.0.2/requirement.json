@@ -6,7 +6,7 @@
     "type": "array",
     "items": {
         "oneOf": [
-            { "$ref": "file:requirements/persistentvolume.json" }
+            { "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/requirements/persistentvolume.json" }
         ]
     }
 }
