@@ -30,7 +30,7 @@ import (
 var SpecVersion string
 
 var schemaLocation = map[string]string{
-	"0.0.2": "https://raw.githubusercontent.com/goern/atomicapp-spec/feature/absolute-references/spec/schema.json",
+	"0.0.2": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/schema.json",
 }
 
 //ValidateFile will validate a file with a Nulecule Specification
