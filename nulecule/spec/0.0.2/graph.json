@@ -28,7 +28,7 @@
                     "description": "A list of ParamsObject that contain information to be used by providers in conjunction with their ArtifactsObject. If params is present, the source field SHALL be ignored.",
                     "type": "array",
                     "items": {
-                        "$ref": "file:param.json"
+                        "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/param.json"
                     }
                 },
                 "artifacts": {
