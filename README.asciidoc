@@ -39,7 +39,7 @@ MAINTAINER Your Name <you@example.com>
 
 ADD /Nulecule /application-entity/
 ADD /Dockerfile README.asciidoc /
-ADD /artifacts /grasshopping/artifacts
+ADD /artifacts /application-entity/artifacts
 ```
 
 To install your newly nuleculized application, simply call `atomic run myapp`.
@@ -82,8 +82,6 @@ github, the rpm build process itself is using `go get` to get the source.
 There is a Makefile target called `test`, which will run all the GO tests. We aim
 to keep the test coverage over 75%.
 
-
-==
 
 == Providers
 
