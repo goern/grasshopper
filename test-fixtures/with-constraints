@@ -12,18 +12,18 @@ metadata:
 graph:
   - name: graphelement1
     params:
-      - name: nocontraint_nodefault
+      - name: noconstraint_nodefault
         description: A parameter without any constraint or default.
       - name: nocontraint_default
         description: A parameter without any constraint but a default.
         default: default value string
 
-      - name: contraint_nodefault
+      - name: constraint_nodefault
         description: A parameter with a constraint but no default.
         constraints:
           allowed_patterns: "^(3[0-1][0-9][0-9][0-9]|32[0-5][0-9][0-9]|326[0-5][0-9]|3266[0-7])$"
           description: The valid range for node port is 30000-32667 for Kubernetes provider
-      - name: contraint_default
+      - name: constraint_default
         description: A parameter with a constraint and a default.
         default: 30303
         constraints:

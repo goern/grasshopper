@@ -20,6 +20,7 @@
 package nulecule
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,12 @@ import (
 func TestDumpNuleculeRecursively(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, _ := ParseFile("../test-fixtures/with-inherits")
+	containerApplication, err := ParseFile("../test-fixtures/with-inherits", "yaml")
+
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+	}
+
 	assert.NotNil(containerApplication)
 
 	assert.NotEmpty(containerApplication.Dump(true))

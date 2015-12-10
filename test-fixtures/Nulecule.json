@@ -1,0 +1,41 @@
+{
+  "specversion": "0.0.2",
+  "id": "test-fixture",
+  "metadata": {
+    "name": "A Nulecule test fixture",
+    "appversion": "1.0.0",
+    "description": "This file is for testing Nulecule artifact inheritance",
+    "license": {
+      "name": "LGPL3",
+      "URL": "http://gnu.org/"
+    }
+  },
+  "graph": [
+    {
+      "name": "graphelement1",
+      "params": [
+        {
+          "name": "nocontraint_nodefault",
+          "description": "A parameter without any constraint or default."
+        },
+        {
+          "name": "nocontraint_default",
+          "description": "A parameter without any constraint but a default.",
+          "default": "default value string"
+        }
+      ],
+      "artifacts": {
+        "kubernetes": [
+          "file://artifacts/openshift/mlbparks-template.yaml"
+        ],
+        "openshift": [
+          {
+            "inherits": [
+              "kubernetes"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

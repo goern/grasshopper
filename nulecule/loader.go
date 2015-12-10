@@ -25,6 +25,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"os"
 
@@ -68,7 +69,7 @@ func LoadNulecule(options *LoaderOptions, url *url.URL) (*ContainerApplication, 
 	}
 
 	// load the Nulecule from the URL
-	app, err := getNuleculeFileFromDockerImage(options, url)
+	app, err := getNuleculeFromDockerImage(options, url)
 	if err != nil {
 		errors = multierror.Append(errors, err)
 
@@ -92,7 +93,7 @@ func LoadNulecule(options *LoaderOptions, url *url.URL) (*ContainerApplication, 
 			componentURL, err := url.Parse(component.Source)
 			// FIXME(goern) chk the err
 
-			externalApp, err := getNuleculeFileFromDockerImage(options, componentURL)
+			externalApp, err := getNuleculeFromDockerImage(options, componentURL)
 			if err != nil {
 				errors = multierror.Append(errors, err)
 
@@ -118,7 +119,7 @@ func LoadNulecule(options *LoaderOptions, url *url.URL) (*ContainerApplication, 
 
 //getNuleculeFileFromDockerImage will extract and return an unvalidated
 // ContainerApplication (Nulecule file)
-func getNuleculeFileFromDockerImage(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
+func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
 	var pullImageOutputStream bytes.Buffer
 	var nuleculeOutputStream bytes.Buffer
 	var dockerImageName string
@@ -183,7 +184,8 @@ func getNuleculeFileFromDockerImage(options *LoaderOptions, url *url.URL) (*Cont
 
 	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeFile)
 
-	app, err := Parse(nuleculeFile)
+	// and parse the Nulecule
+	app, err := Parse(nuleculeFile, http.DetectContentType(nuleculeFile.Bytes()))
 
 	return app, err
 }

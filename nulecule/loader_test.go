@@ -42,13 +42,13 @@ func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 	assert.Nil(app)
 }
 
-func testGetNuleculeFileFromDockerImage(t *testing.T) {
+func testGetNuleculeFromDockerImage(t *testing.T) {
 	assert := assert.New(t)
 
 	// This should work, thus no error checking
 	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
 
-	app, err := getNuleculeFileFromDockerImage(&DefaultLoaderOptions, url)
+	app, err := getNuleculeFromDockerImage(&DefaultLoaderOptions, url)
 
 	assert.Nil(err)
 	assert.NotNil(app)

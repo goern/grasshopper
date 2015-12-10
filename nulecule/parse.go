@@ -20,47 +20,64 @@
 package nulecule
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
-
-	jww "github.com/spf13/jwalterweatherman"
 )
 
+// ParseError denotes failing to parse Nulecule file.
+type ParseError struct {
+	err error
+}
+
+// Returns the formatted Nulecule file parser error.
+func (pe ParseError) Error() string {
+	return fmt.Sprintf("While parsing Nulecule file: %s", pe.err.Error())
+}
+
 // Parse parses the Nulecule file from the given io.Reader.
-func Parse(r io.Reader) (*ContainerApplication, error) {
+func Parse(r io.Reader, format string) (*ContainerApplication, error) {
 	data, err := ioutil.ReadAll(r)
 
 	if err != nil {
-		jww.FATAL.Println(err)
-		return nil, err
+		return nil, ParseError{err}
 	}
 
 	app := ContainerApplication{}
 
-	unmarschalError := yaml.Unmarshal(data, &app)
+	switch strings.ToLower(format) {
+	case "yaml", "yml", "application/x-yaml", "text/x-yaml; charset=utf-8":
+		unmarschalError := yaml.Unmarshal(data, &app)
 
-	if unmarschalError != nil {
-		jww.ERROR.Println(unmarschalError)
-		return nil, unmarschalError // FIXME ERROR: 2015/11/21 yaml: unmarshal errors: line 18: cannot unmarshal !!map into string
+		if unmarschalError != nil {
+			fmt.Printf("Parser: %s\n", unmarschalError.Error())
+			return nil, ParseError{unmarschalError}
+		}
+	case "json", "application/javascript":
+		unmarschalError := json.Unmarshal(data, &app)
+
+		if unmarschalError != nil {
+			fmt.Printf("Parser: %s\n", unmarschalError.Error())
+			return nil, ParseError{unmarschalError}
+		}
 
 	}
 
-	// TODO before returning we should do some sanity checks, like: specversion equals grasshopper supported spec
-
-	return &app, unmarschalError
+	return &app, nil
 }
 
 // ParseFile parses a Nulecule file at the given path.
-func ParseFile(filename string) (*ContainerApplication, error) {
+func ParseFile(filename string, format string) (*ContainerApplication, error) {
 	f, err := os.Open(filename)
 
 	if err != nil {
-		jww.FATAL.Println(err)
-		return nil, err
+		return nil, ParseError{err}
 	}
 
-	return Parse(f)
+	return Parse(f, format)
 }
