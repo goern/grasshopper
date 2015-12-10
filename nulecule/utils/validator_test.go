@@ -20,6 +20,7 @@
 package utils
 
 import (
+	"fmt"
 	"net/url"
 	"testing"
 
@@ -38,7 +39,7 @@ func TestValidate(t *testing.T) {
 
 }
 
-func TestValidatewithUnknownSpecificationVersion(t *testing.T) {
+func TestValidateWithUnknownSpecificationVersion(t *testing.T) {
 	assert := assert.New(t)
 
 	location, err := url.Parse("http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
@@ -47,6 +48,19 @@ func TestValidatewithUnknownSpecificationVersion(t *testing.T) {
 	valid, err := Validate("0.0.99", location)
 	assert.NotNil(err)
 	assert.Equal("The specified version (0.0.99) of the Nulecule Specification is invalid", err.Error())
+	assert.False(valid)
+
+}
+
+func TestValidatewithYAMLNulecule(t *testing.T) {
+	assert := assert.New(t)
+
+	location, err := url.Parse("https://raw.githubusercontent.com/projectatomic/nulecule-library/master/flask-redis-centos7-atomicapp/Nulecule")
+	assert.Nil(err)
+
+	valid, err := Validate("0.0.2", location)
+	assert.NotNil(err)
+	fmt.Printf("%#v\n", err)
 	assert.False(valid)
 
 }
