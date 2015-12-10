@@ -17,7 +17,7 @@
             "default": "null"
         },
         "constraints": {
-            "$ref": "file:constraint.json"
+            "$ref": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/constraint.json"
         },
         "default": {
             "description": "An optional default value for the parameter.",
