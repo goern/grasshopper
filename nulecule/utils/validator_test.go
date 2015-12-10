@@ -19,13 +19,34 @@
 
 package utils
 
-import "testing"
+import (
+	"net/url"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestValidate(t *testing.T) {
-	_, err := ValidateFile("0.0.2", "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
+	assert := assert.New(t)
 
-	if err != nil {
-		t.Errorf("Error (%s)\n", err.Error())
-	}
+	location, err := url.Parse("http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
+	assert.Nil(err)
+
+	valid, err := Validate("0.0.2", location)
+	assert.Nil(err)
+	assert.True(valid)
+
+}
+
+func TestValidatewithUnknownSpecificationVersion(t *testing.T) {
+	assert := assert.New(t)
+
+	location, err := url.Parse("http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
+	assert.Nil(err)
+
+	valid, err := Validate("0.0.99", location)
+	assert.NotNil(err)
+	assert.Equal("The specified version (0.0.99) of the Nulecule Specification is invalid", err.Error())
+	assert.False(valid)
 
 }

@@ -22,11 +22,12 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/goern/grasshopper/nulecule"
+	"github.com/goern/grasshopper/nulecule/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/xeipuuv/gojsonschema"
 
 	jww "github.com/spf13/jwalterweatherman"
 )
@@ -36,14 +37,27 @@ var SpecVersion string
 
 // validateCmd respresents the validate command
 var validateCmd = &cobra.Command{
-	Use:   "validate",
+	Use:   "validate URL",
 	Short: "Validate if a Nulecule file complies to a Specification",
-	Long: `validate will validate that a Nulecule file complies to a specified version
-of the Nulecule Specification. Currently version 0.0.2 is supported.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("validate called")
+	Long: `validate will validate that a Nulecule file at the supplied URL complies
+to a specified version of the Nulecule Specification. Currently version 0.0.2
+is supported.
 
+The Nulecule file must be in JSON Format.`,
+	Run: func(cmd *cobra.Command, args []string) {
 		if err := InitializeConfig(); err != nil {
+			return
+		}
+
+		if len(args) < 1 {
+			cmd.Usage()
+			jww.FATAL.Println("URL of Nulecule file to validate is missing")
+			return
+		}
+
+		location, err := url.Parse(args[0])
+		if err != nil {
+			jww.ERROR.Printf("%s\n", err)
 			return
 		}
 
@@ -51,25 +65,24 @@ of the Nulecule Specification. Currently version 0.0.2 is supported.`,
 
 		// check if SpecVersion equals nulecule.NuleculeReleasedVersions
 		if SpecVersion != nulecule.NuleculeReleasedVersions {
-			jww.ERROR.Printf("The specified version (%s) of the Nulecule Specification is invalid\n", SpecVersion)
+			jww.ERROR.Printf("The specified version (%s) of the Nulecule Specification is not allowed, it must be '0.0.2'\n", SpecVersion)
+			return
 		}
 
-		schemaLoader := gojsonschema.NewReferenceLoader("https://raw.githubusercontent.com/projectatomic/nulecule/master/spec/schema.json")
-		documentLoader := gojsonschema.NewReferenceLoader("file:///home/me/document.json")
+		// check if the Nulecule is JSON
 
-		result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+		result, err := utils.Validate(SpecVersion, location)
 		if err != nil {
-			panic(err.Error())
+			jww.ERROR.Printf("Can't validate Nulecule file: %#v\n", err)
+			return
 		}
 
-		if result.Valid() {
-			fmt.Printf("The document is valid\n")
-		} else {
-			fmt.Printf("The document is not valid. see errors :\n")
-			for _, desc := range result.Errors() {
-				fmt.Printf("- %s\n", desc)
-			}
+		if result {
+			fmt.Printf("Nulecule file (%s) complies to Nulecule Specification v%s\n", location.String(), SpecVersion)
+			return
 		}
+
+		fmt.Printf("The Nulecule file (%s) is not valid.\n", args[0])
 	},
 }
 
