@@ -28,6 +28,9 @@ const (
 	//NuleculeVersion is the version of the Nulecule specification that Grasshopper is implementing
 	NuleculeVersion = "0.0.2"
 
+	//NuleculeReleasedVersions defines what Nulecule specification versions have been released by projectatomic
+	NuleculeReleasedVersions = "0.0.2" // TODO over time this will be a []string, which cant be a constant
+
 	//NulefileManifestFile is the filename we are looking for within the Grasshopper based container
 	NulefileManifestFile = "Nulecule"
 

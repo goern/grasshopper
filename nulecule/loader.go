@@ -27,7 +27,6 @@ import (
 	"io"
 	"net/url"
 	"os"
-	"strings"
 
 	"github.com/fsouza/go-dockerclient"
 	"github.com/hashicorp/go-multierror"
@@ -132,9 +131,7 @@ func getNuleculeFileFromDockerImage(options *LoaderOptions, url *url.URL) (*Cont
 		return nil, err
 	}
 
-	if url.Scheme == "docker" {
-		dockerImageName = url.Host + url.Path
-	}
+	dockerImageName = url.Host + url.Path
 
 	jww.DEBUG.Printf("URL path is %s\n", dockerImageName)
 
@@ -193,8 +190,7 @@ func getNuleculeFileFromDockerImage(options *LoaderOptions, url *url.URL) (*Cont
 
 //getArtifactsFromDockerImage will get all artifact files for all providers
 // and return them as a tar archive
-func getArtifactsFromDockerImage(options *LoaderOptions, URL string) (*bytes.Buffer, error) {
-	splitURL := strings.Split(URL, "/")
+func getArtifactsFromDockerImage(options *LoaderOptions, url *url.URL) (*bytes.Buffer, error) {
 	var artifactsOutputStream bytes.Buffer
 	var errors *multierror.Error
 
@@ -208,7 +204,7 @@ func getArtifactsFromDockerImage(options *LoaderOptions, URL string) (*bytes.Buf
 
 	// run that image so we can copy files from it
 	containerConfig := docker.Config{
-		Image: splitURL[2] + "/" + splitURL[3],
+		Image: url.Host + url.Path,
 	}
 	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: uuid.NewV4().String(), Config: &containerConfig})
 	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: container.ID})
@@ -220,7 +216,8 @@ func getArtifactsFromDockerImage(options *LoaderOptions, URL string) (*bytes.Buf
 	}
 
 	// and copy the files (as a tar)
-	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&artifactsOutputStream, container.ID, "/application-entity/Nulecule"})
+	// TODO the artifacts MAY be located anywhere within the image, we just assume them in /artifacts
+	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&artifactsOutputStream, container.ID, "/application-entity/artifacts"})
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
 		errors = multierror.Append(errors, err)

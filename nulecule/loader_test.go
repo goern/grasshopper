@@ -40,5 +40,28 @@ func TestLoadNuleculeWithNonDockerURL(t *testing.T) {
 
 	assert.Equal(err.(*multierror.Error).Errors[0], fmt.Errorf("Not a docker URL schema"))
 	assert.Nil(app)
+}
 
+func testGetNuleculeFileFromDockerImage(t *testing.T) {
+	assert := assert.New(t)
+
+	// This should work, thus no error checking
+	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
+
+	app, err := getNuleculeFileFromDockerImage(&DefaultLoaderOptions, url)
+
+	assert.Nil(err)
+	assert.NotNil(app)
+}
+
+func testGetArtifactsFromDockerImage(t *testing.T) {
+	assert := assert.New(t)
+
+	// This should work too, thus no error checking ;)
+	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
+
+	app, err := getArtifactsFromDockerImage(&DefaultLoaderOptions, url)
+
+	assert.Nil(err)
+	assert.NotNil(app)
 }
