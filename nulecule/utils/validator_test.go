@@ -22,7 +22,7 @@ package utils
 import "testing"
 
 func TestValidate(t *testing.T) {
-	_, err := ValidateFile("0.0.2", "https://raw.githubusercontent.com/projectatomic/nulecule-library/master/wordpress-centos7-atomicapp/Nulecule")
+	_, err := ValidateFile("0.0.2", "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
 
 	if err != nil {
 		t.Errorf("Error (%s)\n", err.Error())
