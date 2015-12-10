@@ -2,6 +2,7 @@ grasshopper(8)
 ==============
 include::man.asciidoc[]
 
+
 NAME
 ----
 grasshopper - a Nulecule implementation
@@ -15,22 +16,79 @@ grasshopper
 DESCRIPTION
 -----------
 
-Grasshopper will make your Nulecule GO! It is will configure and deploy a multi
+Grasshopper will make your Nulecule GO! It will configure and deploy a multi
 container application (compliant with the Nulecule Specification) to a specified
 provider.
 
-grasshopper is supposed to be used in a container, which in addition to grasshopper
+grasshopper is supposed to be used in a container. If you choose to, that container
 also carries all files required to comply with the Nulecule Specification.
 
 
-SEE ALSO
+OPTIONS
+-------
+*-v, --verbose*::
+    Verbosely print processing information and configuration file
+    checks to stderr and the logfile if logging is enabled.
+
+*-x, --experimental*::
+    Write experimental output to stdout, this is set to true by default.
+
+*-l, --log*::
+    Write logging output to a file, default location is ./grasshopper.log. This
+    option is enable by default.
+
+
+COMMANDS
 --------
+*version*::
+    Print the version of Grasshopper to stdout.
 
-/usr/share/doc/grasshopper-*/README.html
-http://www.projectatomic.io/nulecule/spec/0.0.2/index.html
+*show license*::
+    Show the license on stdout.
 
+
+EXIT STATUS
+-----------
+*0*::
+    Success
+
+*1*::
+    Failure (syntax or usage error; configuration error; command specific error;
+    unexpected error).
+
+
+BUGS
+----
+Please see <https://github.com/goern/grasshopper/issues> for a list of bugs and
+to report new bugs.
 
 
 AUTHORS
 -------
 include::AUTHORS[]
+
+
+RESOURCES
+---------
+
+Nulecule Specification: <http://www.projectatomic.io/nulecule/spec/0.0.2/index.html>
+
+
+COPYING
+-------
+Copyright 2015 Red Hat, Inc.
+
+This file is part of Grasshopper.
+
+Grasshopper is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Grasshopper is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Grasshopper. If not, see <http://www.gnu.org/licenses/>.
