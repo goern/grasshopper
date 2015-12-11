@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"strings"
 
@@ -41,8 +42,10 @@ func (pe ParseError) Error() string {
 }
 
 // Parse parses the Nulecule file from the given io.Reader.
-func Parse(r io.Reader, format string) (*ContainerApplication, error) {
+func Parse(r io.Reader) (*ContainerApplication, error) {
 	data, err := ioutil.ReadAll(r)
+
+	format := guessFileFormat(r)
 
 	if err != nil {
 		return nil, ParseError{err}
@@ -51,33 +54,41 @@ func Parse(r io.Reader, format string) (*ContainerApplication, error) {
 	app := ContainerApplication{}
 
 	switch strings.ToLower(format) {
-	case "yaml", "yml", "application/x-yaml", "text/x-yaml; charset=utf-8":
+	case "yaml", "yml", "application/x-yaml", "text/x-yaml; charset=utf-8", "application/octet-stream":
 		unmarschalError := yaml.Unmarshal(data, &app)
 
 		if unmarschalError != nil {
 			fmt.Printf("Parser: %s\n", unmarschalError.Error())
 			return nil, ParseError{unmarschalError}
 		}
-	case "json", "application/javascript":
+	case "json", "application/javascript", "text/plain; charset=utf-8":
 		unmarschalError := json.Unmarshal(data, &app)
 
 		if unmarschalError != nil {
 			fmt.Printf("Parser: %s\n", unmarschalError.Error())
 			return nil, ParseError{unmarschalError}
 		}
-
+	default:
+		return nil, ParseError{fmt.Errorf("File format %s is not supported", format)}
 	}
 
 	return &app, nil
 }
 
 // ParseFile parses a Nulecule file at the given path.
-func ParseFile(filename string, format string) (*ContainerApplication, error) {
+func ParseFile(filename string) (*ContainerApplication, error) {
 	f, err := os.Open(filename)
 
 	if err != nil {
 		return nil, ParseError{err}
 	}
 
-	return Parse(f, format)
+	return Parse(f)
+}
+
+func guessFileFormat(r io.Reader) string {
+	buf := make([]byte, 512)
+
+	r.Read(buf)
+	return http.DetectContentType(buf)
 }

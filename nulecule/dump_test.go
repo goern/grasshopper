@@ -29,7 +29,7 @@ import (
 func TestDumpNuleculeRecursively(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, err := ParseFile("../test-fixtures/with-inherits", "yaml")
+	containerApplication, err := ParseFile("../test-fixtures/with-inherits")
 
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())

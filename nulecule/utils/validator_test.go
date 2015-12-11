@@ -52,7 +52,7 @@ func TestValidateWithUnknownSpecificationVersion(t *testing.T) {
 
 }
 
-func TestValidatewithYAMLNulecule(t *testing.T) {
+func TestValidateWithYAMLNulecule(t *testing.T) {
 	assert := assert.New(t)
 
 	location, err := url.Parse("https://raw.githubusercontent.com/projectatomic/nulecule-library/master/flask-redis-centos7-atomicapp/Nulecule")

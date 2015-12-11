@@ -25,7 +25,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"net/url"
 	"os"
 
@@ -185,7 +184,7 @@ func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*Containe
 	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeFile)
 
 	// and parse the Nulecule
-	app, err := Parse(nuleculeFile, http.DetectContentType(nuleculeFile.Bytes()))
+	app, err := Parse(nuleculeFile)
 
 	return app, err
 }

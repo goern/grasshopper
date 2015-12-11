@@ -20,6 +20,7 @@
 package nulecule
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ import (
 func TestParseFile(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule", "yaml")
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 
 	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
@@ -37,7 +38,7 @@ func TestParseFile(t *testing.T) {
 func TestParseFileWithInherits(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/with-inherits", "yaml")
+	containerApplication, parseError := ParseFile("../test-fixtures/with-inherits")
 
 	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
@@ -46,7 +47,7 @@ func TestParseFileWithInherits(t *testing.T) {
 func TestParseFileWithConstraints(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/with-constraints", "yaml")
+	containerApplication, parseError := ParseFile("../test-fixtures/with-constraints")
 
 	assert.Nil(parseError)
 	assert.NotNil(containerApplication)
@@ -55,15 +56,18 @@ func TestParseFileWithConstraints(t *testing.T) {
 func TestParseFileBorkenNulecule(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.borken", "yaml")
+	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.borken")
 	assert.NotNil(parseError)
+	assert.Equal("While parsing Nulecule file: yaml: unmarshal errors:\n  line 8: cannot unmarshal !!seq into map[string]interface {}",
+		parseError.Error())
+
 	assert.Nil(containerApplicationBroken)
 }
 
 func TestParseJSONNuleculeFile(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.json", "json")
+	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.json")
 	assert.Nil(parseError)
 	assert.NotNil(containerApplicationBroken)
 }
@@ -72,7 +76,40 @@ func TestParseJSONNuleculeFile(t *testing.T) {
 func XXXTestParseJSONAsYAML(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.json", "yaml")
+	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.json")
 	assert.NotNil(parseError)
+
 	assert.Nil(containerApplicationBroken)
+}
+
+func XXXTestParseUnknwonFormat(t *testing.T) {
+	assert := assert.New(t)
+
+	containerApplicationBroken, parseError := ParseFile("../test-fixtures/Nulecule.ini")
+	assert.NotNil(parseError)
+	assert.Equal("While parsing Nulecule file: File format XYZ is not supported", parseError.Error())
+
+	assert.Nil(containerApplicationBroken)
+}
+
+func TestGuessFileFormatJSON(t *testing.T) {
+	assert := assert.New(t)
+
+	f, err := os.Open("../test-fixtures/Nulecule.json")
+	defer f.Close()
+	assert.Nil(err)
+	assert.NotNil(f)
+
+	assert.Equal("text/plain; charset=utf-8", guessFileFormat(f))
+}
+
+func TestGuessFileFormatYAML(t *testing.T) {
+	assert := assert.New(t)
+
+	f, err := os.Open("../test-fixtures/Nulecule")
+	defer f.Close()
+	assert.Nil(err)
+	assert.NotNil(f)
+
+	assert.Equal("application/octet-stream", guessFileFormat(f))
 }

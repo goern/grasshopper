@@ -30,7 +30,7 @@ import (
 func TestValidate(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule", "yaml")
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 	assert.Nil(parseError)
 
 	if assert.NotNil(containerApplication) {
@@ -48,7 +48,7 @@ func TestValidate(t *testing.T) {
 func TestInvalideNulecule(t *testing.T) {
 	assert := assert.New(t)
 
-	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule", "yaml")
+	containerApplication, parseError := ParseFile("../test-fixtures/Nulecule")
 	assert.Nil(parseError)
 
 	if parseError != nil {
