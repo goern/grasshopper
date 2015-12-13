@@ -63,6 +63,7 @@ DOCKER_CERT_PATH) Grasshopper will talk to the remote docker daemon.
 
 image:https://travis-ci.org/goern/grasshopper.svg?branch=master["Build Status", link="https://travis-ci.org/goern/grasshopper"]
 image:https://coveralls.io/repos/goern/grasshopper/badge.svg?branch=master&service=github["Build Status", link="https://coveralls.io/github/goern/grasshopper?branch=master"]
+image:https://godoc.org/github.com/goern/grasshopper?status.svg["Godoc", link="https://godoc.org/github.com/goern/grasshopper?status.svg"]
 
 First of all, clone the github repository: `git clone https://github.com/goern/grasshopper`.
 
