@@ -13,7 +13,7 @@ deps: Godeps/Godeps.json
 
 .PHONY: test
 test:
-	go test -v github.com/goern/grasshopper/nulecule github.com/goern/grasshopper/nulecule/utils
+	go test -v github.com/goern/grasshopper/provider github.com/goern/grasshopper/nulecule github.com/goern/grasshopper/nulecule/utils
 
 .PHONY: image
 image: build test
