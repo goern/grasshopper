@@ -20,36 +20,68 @@
 package provider
 
 import (
-	"fmt"
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
 	"log"
-
-	"gopkg.in/jmcvetta/napping.v3"
+	"net/http"
 )
 
-type ResponseUserAgent struct {
-	Useragent string `json:"user-agent"`
-}
+const (
+	certFile    string = "/Users/goern/Gocode/src/github.com/goern/grasshopper/openshift-master.crt"
+	keyFile     string = "/Users/goern/Gocode/src/github.com/goern/grasshopper/openshift-master.key"
+	caFile      string = "/Users/goern/Gocode/src/github.com/goern/grasshopper/ca.crt"
+	apiEndpoint string = "https://10.0.2.15:8443/api/v1/"
+)
 
-func doGet() {
-	e := struct {
-		Message string
-	}{}
+var ClientCertificate tls.Certificate
+var caCertificate *tls.Certificate
+var caCertificatePool *x509.CertPool
+var tlsConfig *tls.Config
 
-	s := napping.Session{}
-	res := ResponseUserAgent{}
-	resp, err := s.Get("https://api.github.com/repos/goern/grasshopper", nil, &res, nil)
+func Ping() {
+	// Load client certifiacte
+	ClientCertificate, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("response Status:", resp.Status())
-
-	if resp.Status() == 200 {
-		fmt.Printf("Result: %s\n\n", resp.RawText())
-		fmt.Println("res:", res.Useragent)
-	} else {
-		fmt.Println("Bad response status from server")
-		fmt.Printf("\t Status:  %v\n", resp.Status())
-		fmt.Printf("\t Message: %v\n", e.Message)
+	// Load CA certificate
+	caCertificate, err := ioutil.ReadFile(caFile)
+	if err != nil {
+		log.Fatal(err)
 	}
+	caCertificatePool := x509.NewCertPool()
+	caCertificatePool.AppendCertsFromPEM(caCertificate)
+
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{ClientCertificate},
+		RootCAs:      caCertificatePool,
+	}
+	tlsConfig.BuildNameToCertificate()
+
+	// Setup HTTPS client
+	transport := &http.Transport{TLSClientConfig: tlsConfig}
+	client := &http.Client{Transport: transport}
+
+	// Do GET something
+
+	req, err := http.NewRequest("GET", apiEndpoint, nil)
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// Dump response
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(string(data))
+
 }
