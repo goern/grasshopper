@@ -41,10 +41,10 @@ const (
 	AnswersFileSample = "answers.conf.sample"
 
 	//SupportedProviders lists all prividers that Grasshopper supports
-	SupportedProviders = "none"
+	SupportedProviders = "kubernetes, openshift3"
 
 	//DefaultProvider is the default provider to use
-	DefaultProvider = "none"
+	DefaultProvider = "kubernetes"
 
 	//DefaultNamespace is the default namespace to be used with the provider
 	DefaultNamespace = "default"

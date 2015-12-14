@@ -21,6 +21,7 @@ package nulecule
 
 import (
 	"fmt"
+	"net/url"
 	"testing"
 
 	"github.com/hashicorp/go-multierror"
@@ -61,4 +62,42 @@ func TestInvalideNulecule(t *testing.T) {
 	err := containerApplication.Validate()
 	assert.NotNil(err)
 	assert.Equal(err.(*multierror.Error).Errors[0], fmt.Errorf("'specversion' MUST be 0.0.2"))
+}
+
+func TestValidateSchema(t *testing.T) {
+	assert := assert.New(t)
+
+	location, err := url.Parse("http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
+	assert.Nil(err)
+
+	valid, err := ValidateSchema("0.0.2", location)
+	assert.Nil(err)
+	assert.True(valid)
+
+}
+
+func TestValidateSchemaWithUnknownSpecificationVersion(t *testing.T) {
+	assert := assert.New(t)
+
+	location, err := url.Parse("http://goern.github.io/grasshopper/nulecule/spec/0.0.2/a-fixture-Nulecule")
+	assert.Nil(err)
+
+	valid, err := ValidateSchema("0.0.99", location)
+	assert.NotNil(err)
+	assert.Equal("The specified version (0.0.99) of the Nulecule Specification is invalid", err.Error())
+	assert.False(valid)
+
+}
+
+func TestValidateSchemaWithYAMLNulecule(t *testing.T) {
+	assert := assert.New(t)
+
+	location, err := url.Parse("https://raw.githubusercontent.com/projectatomic/nulecule-library/master/flask-redis-centos7-atomicapp/Nulecule")
+	assert.Nil(err)
+
+	valid, err := ValidateSchema("0.0.2", location)
+	assert.NotNil(err)
+	fmt.Printf("%#v\n", err)
+	assert.False(valid)
+
 }

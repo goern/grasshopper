@@ -124,6 +124,8 @@ func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*Containe
 	var dockerImageName string
 	var dockerRegistry = options.Registry
 
+	var errors *multierror.Error
+
 	client, err := newClientFromEndpoint(options.Endpoint)
 
 	if err != nil {
@@ -148,21 +150,15 @@ func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*Containe
 	}
 
 	// run that image so we can copy files from it
-	containerConfig := docker.Config{
-		Image: dockerImageName,
-	}
-	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: uuid.NewV4().String(), Config: &containerConfig})
-
+	containerID, err := createContainer(client, url)
 	if err != nil {
-		jww.ERROR.Printf("%#v\n", err)
-		return nil, err
+		errors = multierror.Append(errors, err)
+		return nil, errors.ErrorOrNil()
 	}
-	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: container.ID})
-
-	jww.DEBUG.Printf("started %s as %s named %s\n", dockerImageName, container.ID, container.Name)
+	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: containerID})
 
 	// and copy the files (as a tar)
-	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&nuleculeOutputStream, container.ID, "/application-entity/Nulecule"})
+	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&nuleculeOutputStream, containerID, "/application-entity/Nulecule"})
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
 		return nil, err
@@ -181,7 +177,7 @@ func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*Containe
 		jww.ERROR.Printf("Can't copy the Nulecule file: %s", err)
 	}
 
-	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", container.ID, nuleculeFile)
+	jww.DEBUG.Printf("get Nuleculde from %s:\n%s\n", containerID, nuleculeFile)
 
 	// and parse the Nulecule
 	app, err := Parse(nuleculeFile)
@@ -204,21 +200,16 @@ func getArtifactsFromDockerImage(options *LoaderOptions, url *url.URL) (*bytes.B
 	}
 
 	// run that image so we can copy files from it
-	containerConfig := docker.Config{
-		Image: url.Host + url.Path,
-	}
-	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: uuid.NewV4().String(), Config: &containerConfig})
-	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: container.ID})
-
+	containerID, err := createContainer(client, url)
 	if err != nil {
-		jww.ERROR.Printf("%#v\n", err)
 		errors = multierror.Append(errors, err)
 		return nil, errors.ErrorOrNil()
 	}
+	defer client.RemoveContainer(docker.RemoveContainerOptions{ID: containerID})
 
 	// and copy the files (as a tar)
 	// TODO the artifacts MAY be located anywhere within the image, we just assume them in /artifacts
-	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&artifactsOutputStream, container.ID, "/application-entity/artifacts"})
+	err = client.CopyFromContainer(docker.CopyFromContainerOptions{&artifactsOutputStream, containerID, "/application-entity/artifacts"})
 	if err != nil {
 		jww.ERROR.Printf("%#v\n", err)
 		errors = multierror.Append(errors, err)
@@ -248,4 +239,21 @@ func newClientFromEndpoint(endpoint *DockerEndpoint) (*docker.Client, error) {
 	}
 
 	return client, err
+}
+
+func createContainer(client *docker.Client, url *url.URL) (string, error) {
+	// run that image so we can copy files from it
+	containerConfig := docker.Config{
+		Image: url.Host + url.Path,
+	}
+	container, err := client.CreateContainer(docker.CreateContainerOptions{Name: uuid.NewV4().String(), Config: &containerConfig})
+
+	if err != nil {
+		jww.ERROR.Printf("%#v\n", err)
+		return "", err
+	}
+
+	jww.DEBUG.Printf("started %s as %s named %s\n", url.Host+url.Path, container.ID, container.Name)
+
+	return container.ID, nil
 }

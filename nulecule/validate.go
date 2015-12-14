@@ -21,11 +21,55 @@ package nulecule
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/hashicorp/go-multierror"
+	"github.com/xeipuuv/gojsonschema"
 
 	jww "github.com/spf13/jwalterweatherman"
 )
+
+// SpecVersion specifies the Nulecule Specification's version to validate with
+var SpecVersion string
+
+var schemaLocation = map[string]string{
+	"0.0.2": "http://goern.github.io/grasshopper/nulecule/spec/0.0.2/schema.json",
+}
+
+//ValidateSchema will validate a file with a Nulecule Specification
+func ValidateSchema(schemaVersion string, location *url.URL) (bool, error) {
+	var rc error
+
+	// check if schemaVersion equals nulecule.NuleculeReleasedVersions
+	if schemaVersion != NuleculeReleasedVersions {
+		return false, fmt.Errorf("The specified version (%s) of the Nulecule Specification is invalid", schemaVersion)
+	}
+
+	schemaLoader := gojsonschema.NewReferenceLoader(schemaLocation[schemaVersion])
+	documentLoader := gojsonschema.NewReferenceLoader(location.String())
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		return false, err
+	}
+
+	if result.Valid() {
+		// until now, all is good
+		// so lets have a look at the artifacts
+
+		return true, nil
+	}
+
+	fmt.Printf("The document is not valid. see errors :\n")
+	for _, desc := range result.Errors() {
+		rc = multierror.Append(rc, fmt.Errorf("%s\n", desc.Description()))
+		fmt.Printf("- %s\n", desc)
+	}
+
+	rc = multierror.Append(fmt.Errorf("The document is not valid with Nulecule Specification version %s", schemaVersion))
+
+	return false, rc
+}
 
 // Validate validates the Nulecule file
 func (nulecule *ContainerApplication) Validate() error {

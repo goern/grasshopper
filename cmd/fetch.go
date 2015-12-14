@@ -65,6 +65,7 @@ var FetchCmd = &cobra.Command{
 		// this will recursively load all Nulecule files and merge them
 		jww.INFO.Printf("fetching: %q", strings.Join(args, " "))
 
+		// TODO we need to check the command line!
 		var dockerEndpoint = nulecule.DockerEndpoint{"unix", "", 0, "/var/run/docker.sock"}
 		var loaderConfig = nulecule.LoaderOptions{viper.GetString("docker-registry"), &dockerEndpoint}
 
@@ -98,5 +99,4 @@ func init() {
 	viper.SetDefault("dockerCertPath", "/etc/docker/certs")
 	viper.SetDefault("dockerTLSVerify", false)
 	viper.SetDefault("dockerRegistry", "registry.docker.com")
-
 }
