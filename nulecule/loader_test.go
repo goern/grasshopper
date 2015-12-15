@@ -65,3 +65,55 @@ func testGetArtifactsFromDockerImage(t *testing.T) {
 	assert.Nil(err)
 	assert.NotNil(app)
 }
+
+func TestLoadNuleculeWithErrors(t *testing.T) {
+	assert := assert.New(t)
+
+	getNuleculeFromDockerImage = func(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
+		return nil, fmt.Errorf("Not a docker URL schema")
+	}
+
+	// This should work, thus no error checking
+	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
+
+	app, err := LoadNulecule(&DefaultLoaderOptions, url)
+
+	assert.NotNil(err)
+	assert.Nil(app)
+
+}
+
+func TestLoadNuleculeWithValidNulecule(t *testing.T) {
+	assert := assert.New(t)
+
+	getNuleculeFromDockerImage = func(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
+		return ParseFile("../test-fixtures/Nulecule")
+	}
+
+	// This should work, thus no error checking
+	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
+
+	app, err := LoadNulecule(&DefaultLoaderOptions, url)
+
+	assert.Nil(err)
+	assert.NotNil(app)
+}
+
+func TestLoadNuleculeWithInalidNulecule(t *testing.T) {
+	assert := assert.New(t)
+
+	getNuleculeFromDockerImage = func(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
+		app, err := ParseFile("../test-fixtures/Nulecule")
+		app.Specversion = "0.0.99" // invalidate the ContainerApplication
+
+		return app, err
+	}
+
+	// This should work, thus no error checking
+	url, _ := url.Parse("docker://projectatomic/wordpress-centos7-atomicapp")
+
+	app, err := LoadNulecule(&DefaultLoaderOptions, url)
+
+	assert.NotNil(err)
+	assert.Nil(app)
+}

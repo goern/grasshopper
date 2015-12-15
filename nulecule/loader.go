@@ -118,7 +118,7 @@ func LoadNulecule(options *LoaderOptions, url *url.URL) (*ContainerApplication, 
 
 //getNuleculeFileFromDockerImage will extract and return an unvalidated
 // ContainerApplication (Nulecule file)
-func getNuleculeFromDockerImage(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
+var getNuleculeFromDockerImage = func(options *LoaderOptions, url *url.URL) (*ContainerApplication, error) {
 	var pullImageOutputStream bytes.Buffer
 	var nuleculeOutputStream bytes.Buffer
 	var dockerImageName string
