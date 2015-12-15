@@ -44,16 +44,15 @@ func (pe ParseError) Error() string {
 // Parse parses the Nulecule file from the given io.Reader.
 func Parse(r io.Reader) (*ContainerApplication, error) {
 	data, err := ioutil.ReadAll(r)
-
-	format := guessFileFormat(r)
-
 	if err != nil {
 		return nil, ParseError{err}
 	}
 
+	format := strings.ToLower(guessFileFormat(r))
+
 	app := ContainerApplication{}
 
-	switch strings.ToLower(format) {
+	switch format {
 	case "yaml", "yml", "application/x-yaml", "text/x-yaml; charset=utf-8", "application/octet-stream":
 		unmarschalError := yaml.Unmarshal(data, &app)
 
