@@ -35,3 +35,6 @@ README.html
 # a default config and log
 grasshopper.json
 grasshopper.log
+
+# igonore Vagrant stuff
+.vagrant/
