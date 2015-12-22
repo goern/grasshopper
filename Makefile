@@ -9,6 +9,7 @@ all build: deps test
 	CGO_ENABLED=0 go build --ldflags '-extldflags "-static" -X github.com/goern/grasshopper/cmd.minversion=$(GRASSHOPPER_MIN_VERSION) -X github.com/goern/grasshopper/cmd.version=$(GRASSHOPPER_VERSION)'
 
 deps: Godeps/Godeps.json
+	go get github.com/tools/godep
 	godep restore
 
 .PHONY: test
