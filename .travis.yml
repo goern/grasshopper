@@ -12,8 +12,9 @@ install:
   - go get github.com/goern/grasshopper
 script:
   - scripts/coverage --coveralls
+  - go test -coverprofile=coverage.txt -covermode=atomic github.com/goern/grasshopper/nulecule
 after_success:
-  - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.txt -service=travis-ci
+  - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
   - bash <(curl -s https://codecov.io/bash)
 notifications:
   slack:
