@@ -6,6 +6,7 @@ DOCKER_REGISTRY="docker.io"
 
 # The name of the OpenShift image.
 ORIGIN_IMAGE_NAME="openshift/origin"
+ORIGIN_VERSION="v1.1"
 
 # The public IP address the VM created by Vagrant will get.
 # You will use this IP address to connect to OpenShift web console.
@@ -15,6 +16,11 @@ PUBLIC_HOST="adb.cluster.io"
 # The directory where OpenShift will store the files.
 # This should be "/var/lib/openshift" in case you're not using the :latest tag.
 ORIGIN_DIR="/var/lib/origin"
+OPENSHIFT_DIR="#{ORIGIN_DIR}/openshift.local.config/master"
+KUBECONFIG="#{OPENSHIFT_DIR}/admin.kubeconfig"
+
+# The Docker registry from where we pull the OpenShift Enterprise Docker images
+OPENSHIFT_IMAGE_REGISTRY="registry.access.redhat.com"
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'centos/7'
@@ -50,8 +56,8 @@ Vagrant.configure(2) do |config|
     systemctl start docker
     docker inspect openshift/origin &>/dev/null && exit 0
     echo "[INFO] Pull the #{ORIGIN_IMAGE_NAME} Docker image ..."
-    docker pull #{ORIGIN_IMAGE_NAME}
-    docker tag #{DOCKER_REGISTRY}/#{ORIGIN_IMAGE_NAME} #{ORIGIN_IMAGE_NAME}
+    docker pull #{ORIGIN_IMAGE_NAME}:#{ORIGIN_VERSION}
+    docker tag #{DOCKER_REGISTRY}/#{ORIGIN_IMAGE_NAME} #{ORIGIN_IMAGE_NAME}:#{ORIGIN_VERSION}
   SHELL
 
   config.vm.provision "shell", inline: <<-SHELL
