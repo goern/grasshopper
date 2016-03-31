@@ -14,9 +14,9 @@ install:
 - go get gopkg.in/yaml.v2
 - go get github.com/goern/grasshopper
 script:
-- scripts/coverage --coveralls
+  - scripts/coverage --coveralls
 after_success:
-  - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
+  - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.txt -service=travis-ci
   - bash <(curl -s https://codecov.io/bash)
 notifications:
   slack:
